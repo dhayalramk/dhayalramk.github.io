@@ -20,7 +20,7 @@
 <br>
 <br>
 
-    <form method="POST">
+    <form method="POST" id="universe">
 	<center>
 	<div id="birthdate" class="fancytype">
 			BIRTHDATE HERE →
@@ -270,6 +270,16 @@
     dayNames[5] = "Thur",
     dayNames[6] = "Fri",
     dayNames[7] = "Sat";
+	    
+    $( document ).ready(function() {
+       if( localStorage.getItem('universe') != null ){
+         var universe = JSON.parse(localStorage.getItem('universe'));
+         var formUniverse = $('#universe');
+         for(var i=0; i < universe.length; i++){
+           document.getElementsByName(universe[i].name)[0].value = universe[i].value;
+         }
+       }
+    });
 
     </script>
   </body>
