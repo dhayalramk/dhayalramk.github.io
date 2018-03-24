@@ -234,7 +234,9 @@
       e.outputpltday.value = initializeZero(10 * age / 6.39) / 10,
       e.outputpltyear.value = initializeZero(1e3 * age / 90800) / 1e3,
       age / 90800 > 1 ? nextpltbday = new Date(today + 90800 * (1 - (age / 90800 - parseInt(age / 90800))) * 24 * 3600 * 1e3) : nextpltbday = new Date(today + 90800 * (1 - age / 90800) * 24 * 3600 * 1e3),
-      e.outputpltbday.value = getLongDate(nextpltbday))
+      e.outputpltbday.value = getLongDate(nextpltbday));
+	    
+      localStorage.setItem('universe', JSON.stringify( $("#universe").serializeArray() ));
     }
 
     function getLongDate(e) {
