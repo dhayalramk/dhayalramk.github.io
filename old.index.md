@@ -2,10 +2,6 @@
 layout: default
 ---
 
-# Profiles 
-
-* Hackerrank [Profile](https://www.hackerrank.com/dhayalramk) - [Notes](Hackerrank/index.md). 
-
 Text can be **bold**, _italic_, or ~~strikethrough~~.
 
 [Link to another page](./another-page.html).
