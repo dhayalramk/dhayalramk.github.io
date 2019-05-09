@@ -2,7 +2,7 @@
 layout: default
 ---
 
-#DHAYAL RAM K
+# DHAYAL RAM K
 
 Software Engineer with strong motivation towards developing scalable and useful systems.
 Keenly focused on following good principles of software design, code clarity and SDLC.
