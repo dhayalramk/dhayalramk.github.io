@@ -34,4 +34,4 @@ applications using recent Technologies. Also interested in competitive programmi
 
 ## Profiles 
 
-* **Hackerrank** [Profile](https://www.hackerrank.com/dhayalramk) - [Notes](Hackerrank/index.md). 
+**Hackerrank** [Profile](https://www.hackerrank.com/dhayalramk) - [Notes](Hackerrank/index.md). 
