@@ -35,3 +35,6 @@ applications using recent Technologies. Also interested in competitive programmi
 ## Profiles 
 
 **Hackerrank** [Profile](https://www.hackerrank.com/dhayalramk) - [Notes](Hackerrank/index.md). 
+
+## Blogs
+[PHP](PHP/index.md)
