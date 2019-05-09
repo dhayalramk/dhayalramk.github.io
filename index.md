@@ -20,15 +20,21 @@ Company: Educational Initiatives Pvt. Ltd.
 #### Software Enginner ( Dec 2016 – May 2018 ) - 1 yr and 6 mos
 Company: Educational Initiatives Pvt. Ltd.
 
-* Custom framework from scratch in php (Design + Implemetation) Microservice based 
-* Integrated -> RabbitMQ, JWT, ElasticSearch, MongoDB, MySQL, DynamoDB, Postman 
-* Technologies used - PHP, MongoDB, RabbitMQ, Node js, DynamoDB
+* Custom framework - I owned the design and development Microservice based
+Framework, Fully configurable of Persistence, Tasks, Router, and Configuration. Used
+PHP, php-di, mongo, Dynamo DB, MySQL, ORM, and RabbitMQ.
+* Microservice and Workflow - Owner of multiple Microservices, designed and
+implemented User Management, Content, Authentication, Reward Engine, and
+Workflows. Developed inside the custom framework with best algorithm design which
+enables enrichment of data models, allows splitting a request to multiple actions. Used
+Dynamo DB, PHP-Memcached
 
 #### Research and Development ( Jul 2014 - Dec 2016 ) - 2 yr and 6 mos
 
 Company: Valued Epistemics Pvt. Ltd.
 
-* Custom CMS
+* Custom CMS - From Lead generation to Life time value of the customer. Issue Tracker,
+Point of Sale, University admin. Used Java, JSP, servlet, PHP, JQuery, Android, MYSQL.
 * University Admin, Search, Suggester 
 * Issue Tracker 
 
