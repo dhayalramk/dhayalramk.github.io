@@ -10,7 +10,7 @@
 <b>Objective:</b> Read input and write output in C Programming.
 
 <b>Solutions</b>
-1. [Solution.c](solution.c)  - Normal solution
+1. [Solution.c](Solution.c)  - Normal solution
 2. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution2.c">Solution2.c</a> - Removed unnecessary include headers
 3. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution3.c">Solution3.c</a> - Using gets
 4. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution4.c">Solution4.c</a> - Using gets & puts
