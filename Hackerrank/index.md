@@ -8,6 +8,6 @@
 ### LANGUAGE PROFICIENCY
 
 ##### C
-1. ["Hello World!" in C](HelloWorld/index.md)
+1. ["Hello World!" in C](LanguageProficiency/HelloWorld/index.md)
 2. Playing with Characters
 3. Sum and Difference of Two Numbers
