@@ -9,4 +9,4 @@
 
 ##### C
 1. ["Hello World!" in C](LanguageProficiency/C/HelloWorld/index.md)
-2. [Conditional Statements in C](LanguageProficiency/C/ConditionalStatementsInC/index.md)
+2. [Conditional Statements in C](LanguageProficiency/C/ConditionalStatementsInC/)
