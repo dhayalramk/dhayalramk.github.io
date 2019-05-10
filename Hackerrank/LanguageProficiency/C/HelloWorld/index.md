@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="../../../index.md" target="_blank">
+    <a href="../../../index.md">
         <img src="../../../logo.svg"/>
     </a>
     <br>All efficient solutions to HackerRank problems
