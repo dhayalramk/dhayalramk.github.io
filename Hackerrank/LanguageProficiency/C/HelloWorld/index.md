@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://www.hackerrank.com/dhayalramk" target="_blank">
+    <a href="../../../index.md" target="_blank">
         <img src="../../../logo.svg"/>
     </a>
     <br>All efficient solutions to HackerRank problems
