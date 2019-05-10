@@ -1,5 +1,7 @@
 <p align="center">
-    [![Logo](logo.svg)](https://www.hackerrank.com/dhayalramk)
+    <a href="https://www.hackerrank.com/dhayalramk" target="_blank">
+        <img src="logo.svg"/>
+    </a>
     <br>All efficient solutions to HackerRank problems
 </p>
 
