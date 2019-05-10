@@ -10,16 +10,16 @@
 <b>Objective:</b> Read input and write output in C Programming.
 
 <b>Solutions</b>
-1) [Solution.c](solution.c)  - Normal solution
-2) <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution2.c">Solution2.c</a> - Removed unnecessary include headers
-3) <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution3.c">Solution3.c</a> - Using gets
-4) <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution4.c">Solution4.c</a> - Using gets & puts
-5) <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution5.c">Solution5.c</a> - printf without %s
-6) <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution6.c">Solution6.c</a> - scanf inside printf
-7) <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution7.c">Solution7.c</a> - gets inside printf
-8) <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution8.c">Solution8.c</a> - scanf different format input
-9) <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution9.c">Solution9.c</a> - printf using character by character
-10) <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution10.c">Solution10.c</a> - using fgets
+1. [Solution.c](solution.c)  - Normal solution
+2. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution2.c">Solution2.c</a> - Removed unnecessary include headers
+3. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution3.c">Solution3.c</a> - Using gets
+4. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution4.c">Solution4.c</a> - Using gets & puts
+5. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution5.c">Solution5.c</a> - printf without %s
+6. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution6.c">Solution6.c</a> - scanf inside printf
+7. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution7.c">Solution7.c</a> - gets inside printf
+8. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution8.c">Solution8.c</a> - scanf different format input
+9. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution9.c">Solution9.c</a> - printf using character by character
+10. <a href="https://github.com/DhayalAarthi/CompetitiveProgramming/blob/Hackerrank/Hackerrank/C/HelloWorld/Solution10.c">Solution10.c</a> - using fgets
 
 ## 1) Solution.c - Normal solution
 
