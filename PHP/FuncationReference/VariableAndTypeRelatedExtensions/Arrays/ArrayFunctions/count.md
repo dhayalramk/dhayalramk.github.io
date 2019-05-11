@@ -55,7 +55,7 @@ $array = [1,2,3,4,5];
 count($array)
 ```
 
-**PHP Tested versions:** 7.3.5, 7.2.18, 7.1.29, 7.0.14, 5.6.29, 5.5.34, 5.4.34, 
+**PHP Tested versions:** 7.3.5, 7.2.18, 7.1.29, 7.0.14, 5.6.29, 5.5.34, 5.4.34
 ```php
 5
 ```
@@ -63,4 +63,73 @@ count($array)
 **PHP Tested version:** 5.3.29, 5.2.17, 5.1.6, 5.0.5, 4.4.9
 ```php
 Parse error: syntax error, unexpected '[' in [...][...] on line 1
+```
+
+#### Example #3 count() - Datatypes
+
+```php
+// Boolean 
+$arrayBoolean = array(true, false);
+echo 'Boolean: '.count($arrayBoolean);
+echo PHP_EOL;
+
+// Number
+$arrayNum = array(1,-2,0,4);
+echo 'Number: '.count($arrayNum);
+echo PHP_EOL;
+
+// Float
+$arrayFloat = array(1.234, 1.2e3, 7E-10);
+echo 'Float: '.count($arrayFloat);
+echo PHP_EOL;
+
+// String
+$arrayString = array("one", "");
+echo 'String: '.count($arrayString);
+echo PHP_EOL;
+
+// Null
+$arrayNull = array(NULL, null);
+echo 'Null: '.count($arrayNull);
+echo PHP_EOL;
+
+// Array
+$arrayArray = array(array());
+echo 'Array: '.count($arrayArray);
+echo PHP_EOL;
+
+// Object
+$arrayObject = array( new stdClass() );
+echo 'Object: '.count($arrayObject);
+echo PHP_EOL;
+
+// Callable
+$fun1 = function(){};
+$arrayObject = array( $fun1, function($x){return $x*$x;} );
+echo 'Callable: '.count($arrayObject);
+echo PHP_EOL;
+
+// Mixed
+$arrayMixed = array( 0, null, "one", array(), array(0), 1.2e3, array(1,"one",1.01,""), new stdClass() );
+echo 'Mixed: '.count($arrayMixed);
+echo PHP_EOL;
+    
+```
+
+**PHP Tested versions:** 7.3.5, 7.2.18, 7.1.29, 7.0.14, 5.6.29, 5.5.34, 5.4.34, 5.3.29
+```php
+Boolean: 2
+Number: 4
+Float: 3
+String: 2
+Null: 2
+Array: 1
+Object: 1
+Callable: 2
+Mixed: 8
+```
+
+**PHP Tested version:** 5.2.17, 5.1.6, 5.0.5, 4.4.9
+```php
+Parse error: syntax error, unexpected T_FUNCTION in [...][...] on line 38
 ```
