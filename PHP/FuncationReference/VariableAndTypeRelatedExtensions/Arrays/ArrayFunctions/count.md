@@ -36,17 +36,17 @@ Returns the number of elements in array_or_countable. When the parameter is neit
 ### Examples
 
 <details>
-    <summary>1. count() Example</summary>
+<summary>1. count() Example</summary>
 
-        ```php
-        $array = array( 1, 2, 3, 4, 5 );
-        count( $array );
-        ```
+```php
+$array = array( 1, 2, 3, 4, 5 );
+count( $array );
+```
 
-        **PHP 7.3.5**
+**PHP 7.3.5**
 
-        ```php
-        5
-        ```
+```php
+5
+```
 
 </details>
