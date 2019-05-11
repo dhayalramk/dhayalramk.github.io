@@ -33,10 +33,6 @@ _________________
 
 Returns the number of elements in array_or_countable. When the parameter is neither an array nor an object with implemented Countable interface, 1 will be returned. There is one exception, if array_or_countable is NULL, 0 will be returned.
 
-### Examples
-
-1. [count() - array()](#example-#1-count)
-
 #### Example #1 count() - array()
 _________________
 
