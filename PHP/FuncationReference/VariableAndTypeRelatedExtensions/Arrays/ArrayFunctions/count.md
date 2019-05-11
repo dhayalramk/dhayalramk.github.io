@@ -28,4 +28,23 @@ An array or Countable object.
 **mode**
 If the optional mode parameter is set to COUNT_RECURSIVE (or 1), count() will recursively count the array. This is particularly useful for counting all the elements of a multidimensional array.
 
+### Return Values
+_________________
 
+Returns the number of elements in array_or_countable. When the parameter is neither an array nor an object with implemented Countable interface, 1 will be returned. There is one exception, if array_or_countable is NULL, 0 will be returned.
+
+### Examples
+
+<details>
+    <summary>1. count() Example</summary>
+```php
+$array = array( 1, 2, 3, 4, 5 );
+count( $array );
+```
+
+**PHP 7.3.5**
+```php
+5
+```
+
+</details>
