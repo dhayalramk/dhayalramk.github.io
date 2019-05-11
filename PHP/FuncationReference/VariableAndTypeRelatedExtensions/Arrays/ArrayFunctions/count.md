@@ -1,8 +1,4 @@
-Function Reference 
-> Variable and Type Related Extensions 
-> > Arrays 
-> > > Array Functions 
-> > > > count
+Function Reference > Variable and Type Related Extensions > Arrays  > Array Functions > count
 
 ## count
 
