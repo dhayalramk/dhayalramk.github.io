@@ -36,7 +36,7 @@ Returns the number of elements in array_or_countable. When the parameter is neit
 ### Examples
 _________________
 
-#### Example #1 count() example
+#### Example #1 count() - array()
 
 ```php
 $array = array( 1, 2, 3, 4, 5 );
@@ -47,4 +47,11 @@ count( $array );
 
 ```php
 5
+```
+
+#### Example #2 count() - []
+
+```php
+$array = [1,2,3,4,5];
+count($array)
 ```
