@@ -49,6 +49,7 @@ count( $array );
 5
 ```
 
+---
 #### Example #2 count() - [ ]
 
 ```php
