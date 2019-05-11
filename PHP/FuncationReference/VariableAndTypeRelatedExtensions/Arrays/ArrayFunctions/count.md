@@ -71,49 +71,40 @@ _________________
 ```php
 // Boolean 
 $arrayBoolean = array(true, false);
-echo 'Boolean: '.count($arrayBoolean);
-echo PHP_EOL;
+echo 'Boolean: '.count($arrayBoolean).PHP_EOL;
 
 // Number
 $arrayNum = array(1,-2,0,4);
-echo 'Number: '.count($arrayNum);
-echo PHP_EOL;
+echo 'Number: '.count($arrayNum).PHP_EOL;
 
 // Float
 $arrayFloat = array(1.234, 1.2e3, 7E-10);
-echo 'Float: '.count($arrayFloat);
-echo PHP_EOL;
+echo 'Float: '.count($arrayFloat).PHP_EOL;
 
 // String
 $arrayString = array("one", "");
-echo 'String: '.count($arrayString);
-echo PHP_EOL;
+echo 'String: '.count($arrayString).PHP_EOL;
 
 // Null
 $arrayNull = array(NULL, null);
-echo 'Null: '.count($arrayNull);
-echo PHP_EOL;
+echo 'Null: '.count($arrayNull).PHP_EOL;
 
 // Array
 $arrayArray = array(array());
-echo 'Array: '.count($arrayArray);
-echo PHP_EOL;
+echo 'Array: '.count($arrayArray).PHP_EOL;
 
 // Object
 $arrayObject = array( new stdClass() );
-echo 'Object: '.count($arrayObject);
-echo PHP_EOL;
+echo 'Object: '.count($arrayObject).PHP_EOL;
 
 // Callable
 $fun1 = function(){};
 $arrayObject = array( $fun1, function($x){return $x*$x;} );
-echo 'Callable: '.count($arrayObject);
-echo PHP_EOL;
+echo 'Callable: '.count($arrayObject).PHP_EOL;
 
 // Mixed
 $arrayMixed = array( 0, null, "one", array(), array(0), 1.2e3, array(1,"one",1.01,""), new stdClass() );
-echo 'Mixed: '.count($arrayMixed);
-echo PHP_EOL;
+echo 'Mixed: '.count($arrayMixed).PHP_EOL;
     
 ```
 
@@ -132,5 +123,5 @@ Mixed: 8
 
 **PHP Tested version:** 5.2.17, 5.1.6, 5.0.5, 4.4.9
 ```php
-Parse error: syntax error, unexpected T_FUNCTION in [...][...] on line 38
+Parse error: syntax error, unexpected T_FUNCTION in [...][...] on line 31
 ```
