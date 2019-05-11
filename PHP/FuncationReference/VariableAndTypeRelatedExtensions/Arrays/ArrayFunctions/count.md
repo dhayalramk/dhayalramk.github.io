@@ -66,6 +66,7 @@ Parse error: syntax error, unexpected '[' in [...][...] on line 1
 ```
 
 #### Example #3 count() - Datatypes
+_________________
 
 ```php
 // Boolean 
