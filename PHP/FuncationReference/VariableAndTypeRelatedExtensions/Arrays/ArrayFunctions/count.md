@@ -9,7 +9,8 @@ count — Count all elements in an array, or something in an object
 ### Description 
 
 ```php 
-count ( mixed $array_or_countable [, int $mode = COUNT_NORMAL ] ) : int  ```
+count ( mixed $array_or_countable [, int $mode = COUNT_NORMAL ] ) : int 
+```
 
 Counts all elements in an array, or something in an object.
 
