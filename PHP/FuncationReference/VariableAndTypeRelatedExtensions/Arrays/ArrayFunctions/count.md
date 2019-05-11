@@ -43,7 +43,8 @@ $array = array( 1, 2, 3, 4, 5 );
 count( $array );
 ```
 
-**PHP Tested versions:** 7.3.5, 7.2.18, 7.1.0, 7.0.14, 5.6.29, 5.5.34, 5.4.34, 5.3.29, 5.2.17, 5.1.6, 5.0.5, 4.4.9
+**PHP Tested versions:** 
+<a href="http://sandbox.onlinephpfunctions.com/code/31e851c6f2c2da0a37acdbc405eaa338d8da8ca5" target="_blank">7.3.5</a>, 7.2.18, 7.1.0, 7.0.14, 5.6.29, 5.5.34, 5.4.34, 5.3.29, 5.2.17, 5.1.6, 5.0.5, 4.4.9
 
 ```php
 5
