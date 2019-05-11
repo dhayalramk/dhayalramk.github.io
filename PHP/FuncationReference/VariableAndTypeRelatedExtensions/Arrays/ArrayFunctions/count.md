@@ -1,4 +1,4 @@
-Function Reference > Variable and Type Related Extensions > Arrays  > Array Functions > count
+[PHP](../../../../index.md) > Function Reference > Variable and Type Related Extensions > Arrays  > Array Functions > [count](count.md)
 
 ## count
 
