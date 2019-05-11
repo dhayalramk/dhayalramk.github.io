@@ -9,5 +9,4 @@
 
 ##### C
 1. ["Hello World!" in C](LanguageProficiency/C/HelloWorld/index.md)
-2. Playing with Characters
-3. Sum and Difference of Two Numbers
+2. [Conditional Statements in C](LanguageProficiency/C/ConditionalStatementsInC/)
