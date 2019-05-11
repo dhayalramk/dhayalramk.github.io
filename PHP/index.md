@@ -1,1 +1,0 @@
-Notes from php.net
