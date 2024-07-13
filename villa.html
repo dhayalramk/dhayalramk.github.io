@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+        }
+        pre {
+            background-color: #f8f8f8;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Booking Confirmation Generator</h2>
+    <form id="bookingForm">
+        <label for="customerName">Customer Name:</label>
+        <input type="text" id="customerName" name="customerName" required>
+
+        <label for="numberOfGuests">Number of Guests:</label>
+        <input type="number" id="numberOfGuests" name="numberOfGuests" required>
+
+        <label for="checkInDate">Check-in Date:</label>
+        <input type="date" id="checkInDate" name="checkInDate" required>
+
+        <label for="checkOutDate">Check-out Date:</label>
+        <input type="date" id="checkOutDate" name="checkOutDate" required>
+
+        <button type="submit">Generate Confirmation</button>
+    </form>
+
+    <pre id="confirmationMessage"></pre>
+</div>
+
+<script>
+    document.getElementById('bookingForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const customerName = document.getElementById('customerName').value;
+        const numberOfGuests = document.getElementById('numberOfGuests').value;
+        const checkInDate = new Date(document.getElementById('checkInDate').value).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+        const checkOutDate = new Date(document.getElementById('checkOutDate').value).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+
+        const bookingAmount = 5000;
+        const balanceAmount = 10000;
+        const propertyName = "VillaHopper#70";
+        const location = "VillaHopper#70, Adithyaram Signature City, Pattipulam, 100ft Road, ECR";
+        const checkInTime = "12:30 PM";
+        const checkOutTime = "11:30 AM";
+        const amenities = [
+            "Private Covered Swimming Pool",
+            "TT Table, Carrom Board, Board Games",
+            "Rooftop Gazebo",
+            "3 Luxury AC Bedrooms including a Suite Room",
+            "Indoor Bar Setup",
+            "Complimentary Snacks and Beverages",
+            "Morning Tea and Coffee",
+            "24/7 Security",
+            "Inverter Battery Backup in case of a power outage",
+            "Modular Kitchen for heating food and minimal cooking",
+            "Ample Car parking space"
+        ];
+
+        const confirmationMessage = `
+Booking Confirmation for ${propertyName} - ${checkInDate} to ${checkOutDate}
+Dear ${customerName},
+Thank you for choosing ${propertyName} for your upcoming stay!
+Booking Amount: Rs. ${bookingAmount}/- (Five Thousand Only)
+Balance Amount: Rs. ${balanceAmount}/- (Ten Thousand Only) to be given during check-in.
+We are pleased to confirm your booking as follows:
+• Property: ${propertyName}
+• Check-in Date: ${checkInDate}
+• Check-out Date: ${checkOutDate}
+• Location: ${location}
+Booking Details:
+• Guest Name: ${customerName}
+• Number of Guests: ${numberOfGuests}
+Check-in Instructions:
+• Check-in Time: ${checkInTime}
+• Check-out Time: ${checkOutTime}
+Amenities:
+• ${amenities.join('\n• ')}
+Contact Information:
+If you have any questions or need further assistance, please do not hesitate to contact us:
+• Phone: +91-8838581697
+• Email: villahopper70@gmail.com
+We look forward to hosting you and hope you have a wonderful stay at ${propertyName}.
+Best regards,
+R. Rathan Gangaa
+        `;
+
+        document.getElementById('confirmationMessage').textContent = confirmationMessage;
+    });
+</script>
+
+</body>
+</html>
