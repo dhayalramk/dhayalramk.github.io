@@ -56,6 +56,9 @@
         <input type="number" id="total" name="total" required>
 
         <button type="submit">Generate Confirmation</button>
+
+        <pre id="confirmationMessage"></pre>
+        <button id="copyButton" style="display: none;">Copy to Clipboard</button>
     </form>
 
     <pre id="confirmationMessage"></pre>
@@ -117,7 +120,11 @@ Best regards,
 R. Rathan Gangaa
         `;
 
-        document.getElementById('confirmationMessage').textContent = confirmationMessage;
+        const confirmationMessageElement = document.getElementById('confirmationMessage');
+        confirmationMessageElement.textContent = confirmationMessage;
+        
+        const copyButton = document.getElementById('copyButton');
+        copyButton.style.display = 'block';
     });
 </script>
 
