@@ -58,13 +58,38 @@
         <button type="submit">Generate Confirmation</button>
 
         <pre id="confirmationMessage"></pre>
-        <button id="copyButton" style="display: none;">Copy to Clipboard</button>
+        
+        <button onclick="copyText()">Copy to Clipbaord</button>
     </form>
 
     <pre id="confirmationMessage"></pre>
 </div>
 
 <script>
+    function copyText() {
+    // Get the text from the div
+    var textToCopy = document.getElementById('copythis').innerText;
+
+    // Create a temporary textarea element
+    var tempTextArea = document.createElement('textarea');
+    tempTextArea.value = textToCopy;
+    
+    // Append the textarea to the body
+    document.body.appendChild(tempTextArea);
+    
+    // Select the text
+    tempTextArea.select();
+    tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+    
+    // Copy the text
+    document.execCommand('copy');
+    
+    // Remove the textarea
+    document.body.removeChild(tempTextArea);
+    
+    // Optionally, provide feedback to the user
+    alert('Text copied to clipboard: ' + textToCopy);
+}
     document.getElementById('bookingForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const customerName = document.getElementById('customerName').value;
