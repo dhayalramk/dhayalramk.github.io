@@ -66,6 +66,34 @@
 </div>
 
 <script>
+
+    function numberToWords(num) {
+    const belowTwenty = [
+        "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+    ];
+    const tens = [
+        "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+    ];
+    const thousands = ["", "Thousand", "Million", "Billion"];
+
+    if (num === 0) return "Zero";
+
+    function helper(n) {
+        if (n < 20) return belowTwenty[n];
+        if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? " " + belowTwenty[n % 10] : "");
+        if (n < 1000) return belowTwenty[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + helper(n % 100) : "");
+        for (let i = 0; i < thousands.length; i++) {
+            const divisor = Math.pow(1000, i + 1);
+            if (n < divisor) {
+                return helper(Math.floor(n / Math.pow(1000, i))) + " " + thousands[i] + (n % Math.pow(1000, i) ? " " + helper(n % Math.pow(1000, i)) : "");
+            }
+        }
+    }
+
+    return helper(num);
+}
+
     function copyText() {
     // Get the text from the div
     var textToCopy = document.getElementById('confirmationMessage').innerText;
@@ -121,8 +149,8 @@
 Booking Confirmation for ${propertyName} - ${checkInDate} to ${checkOutDate}
 Dear ${customerName},
 Thank you for choosing ${propertyName} for your upcoming stay!
-Booking Amount: Rs. ${bookingAmount}/- (Five Thousand Only)
-Balance Amount: Rs. ${balanceAmount}/- (Ten Thousand Only) to be given during check-in.
+Booking Amount: Rs. ${bookingAmount}/- ({numberToWords(bookingAmount)} Only)
+Balance Amount: Rs. ${balanceAmount}/- ({numberToWords(balanceAmount)} Only) to be given during check-in.
 We are pleased to confirm your booking as follows:
 • Property: ${propertyName}
 • Check-in Date: ${checkInDate}
