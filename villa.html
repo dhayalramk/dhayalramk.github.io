@@ -122,8 +122,8 @@
         event.preventDefault();
         const customerName = document.getElementById('customerName').value;
         const numberOfGuests = document.getElementById('numberOfGuests').value;
-        const checkInDate = document.getElementById('checkInDate').value.split('-').reverse().join('-'); 
-        const checkOutDate = document.getElementById('checkOutDate').value.split('-').reverse().join('-'); 
+        const checkInDate = document.getElementById('checkInDate').value.split('-').reverse().join('/'); 
+        const checkOutDate = document.getElementById('checkOutDate').value.split('-').reverse().join('/'); 
 
         const bookingAmount = document.getElementById('advancereceived').value;
         const balanceAmount = document.getElementById('total').value - document.getElementById('advancereceived').value ;
