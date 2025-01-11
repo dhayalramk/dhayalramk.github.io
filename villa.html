@@ -29,6 +29,7 @@
             padding: 10px;
             border: 1px solid #ddd;
             margin-top: 20px;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -56,77 +57,57 @@
         <input type="number" id="total" name="total" required>
 
         <button type="submit">Generate Confirmation</button>
-
-        <pre id="confirmationMessage"></pre>
-        
-        <button onclick="copyText()">Copy to Clipbaord</button>
+        <button type="button" onclick="copyText()">Copy to Clipboard</button>
     </form>
 
     <pre id="confirmationMessage"></pre>
 </div>
 
 <script>
-
     function numberToWords(num) {
-    const belowTwenty = [
-        "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
-        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
-    ];
-    const tens = [
-        "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
-    ];
-    const thousands = ["", "Thousand", "Million", "Billion"];
+        const belowTwenty = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+            "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+        const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+        const thousands = ["", "Thousand", "Million", "Billion"];
 
-    if (num === 0) return "Zero";
+        if (num === 0) return "Zero";
 
-    function helper(n) {
-        if (n < 20) return belowTwenty[n];
-        if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? " " + belowTwenty[n % 10] : "");
-        if (n < 1000) return belowTwenty[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + helper(n % 100) : "");
-        for (let i = 0; i < thousands.length; i++) {
-            const divisor = Math.pow(1000, i + 1);
-            if (n < divisor) {
-                return helper(Math.floor(n / Math.pow(1000, i))) + " " + thousands[i] + (n % Math.pow(1000, i) ? " " + helper(n % Math.pow(1000, i)) : "");
+        function helper(n) {
+            if (n < 20) return belowTwenty[n];
+            if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? " " + belowTwenty[n % 10] : "");
+            if (n < 1000) return belowTwenty[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + helper(n % 100) : "");
+            for (let i = 0; i < thousands.length; i++) {
+                const divisor = Math.pow(1000, i + 1);
+                if (n < divisor) {
+                    return helper(Math.floor(n / Math.pow(1000, i))) + " " + thousands[i] +
+                        (n % Math.pow(1000, i) ? " " + helper(n % Math.pow(1000, i)) : "");
+                }
             }
         }
+
+        return helper(num);
     }
 
-    return helper(num);
-}
-
     function copyText() {
-    // Get the text from the div
-    var textToCopy = document.getElementById('confirmationMessage').innerText;
+        const textToCopy = document.getElementById('confirmationMessage').innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert('Text copied to clipboard!');
+        }).catch(err => {
+            alert('Failed to copy text: ', err);
+        });
+    }
 
-    // Create a temporary textarea element
-    var tempTextArea = document.createElement('textarea');
-    tempTextArea.value = textToCopy;
-    
-    // Append the textarea to the body
-    document.body.appendChild(tempTextArea);
-    
-    // Select the text
-    tempTextArea.select();
-    tempTextArea.setSelectionRange(0, 99999); // For mobile devices
-    
-    // Copy the text
-    document.execCommand('copy');
-    
-    // Remove the textarea
-    document.body.removeChild(tempTextArea);
-    
-    // Optionally, provide feedback to the user
-    alert('Text copied to clipboard: ' + textToCopy);
-}
-    document.getElementById('bookingForm').addEventListener('submit', function(event) {
+    document.getElementById('bookingForm').addEventListener('submit', function (event) {
         event.preventDefault();
+
         const customerName = document.getElementById('customerName').value;
         const numberOfGuests = document.getElementById('numberOfGuests').value;
-        const checkInDate = document.getElementById('checkInDate').value.split('-').reverse().join('/'); 
-        const checkOutDate = document.getElementById('checkOutDate').value.split('-').reverse().join('/'); 
+        const checkInDate = document.getElementById('checkInDate').value.split('-').reverse().join('/');
+        const checkOutDate = document.getElementById('checkOutDate').value.split('-').reverse().join('/');
+        const bookingAmount = parseInt(document.getElementById('advancereceived').value);
+        const totalAmount = parseInt(document.getElementById('total').value);
+        const balanceAmount = totalAmount - bookingAmount;
 
-        const bookingAmount = document.getElementById('advancereceived').value;
-        const balanceAmount = document.getElementById('total').value - document.getElementById('advancereceived').value ;
         const propertyName = "VillaHopper#70";
         const location = "VillaHopper#70, Adithyaram Signature City, Pattipulam, 100ft Road, ECR";
         const checkInTime = "02:00 PM";
@@ -136,11 +117,11 @@
             "3 King Size Beds and 4 Single Beds",
             "A Private Swimming Pool with an attached shower and restroom",
             "Play Area with TT Table, Carrom board and other board games",
-            "Rooftop Gazebo for candle light dinner, or just to hang out with friends",
+            "Rooftop Gazebo for candlelight dinners or casual gatherings",
             "Fully functional bar (we do not serve alcohol)",
-            "Free Wifi",
+            "Free Wi-Fi",
             "Inverter backup of up to 8 hours for fans and lights, but not for AC",
-            "Ample Parking Space"
+            "Ample parking space"
         ];
 
         const confirmationMessage = `
@@ -182,11 +163,10 @@ We look forward to hosting you and hope you have a memorable stay at ${propertyN
 
 Warm regards,  
 R. Rathan Gangaa
-`;
+        `;
 
-const confirmationMessageElement = document.getElementById('confirmationMessage');
-confirmationMessageElement.textContent = confirmationMessage;
-
+        document.getElementById('confirmationMessage').textContent = confirmationMessage;
+    });
 </script>
 
 </body>
