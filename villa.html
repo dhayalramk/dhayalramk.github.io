@@ -132,15 +132,15 @@
         const checkInTime = "12:30 PM";
         const checkOutTime = "11:30 AM";
         const amenities = [
-            "2 AC Bedrooms including a large Suite Room, 1 Non AC Bedroom",
+            "3 AC Bedrooms including a large Suite Room with attached Bathrooms",
+            "3 King Size Beds and 4 Single Beds",
             "A Private Swimming Pool with an attached shower and restroom",
-            "Play Area with TT Table",
+            "Play Area with TT Table, Caram board and other board games",
             "Rooftop Gazebo for candle light dinner, or just to hang out with friends",
             "Fully functional bar",
             "Free Wifi",
-            "Inverter Backup upto 8 Hours",
-            "Ample Parking Space",
-            "Morning tea/coffee complimentary"
+            "Inverter Backup upto 8 Hours for Fans and Lights not AC",
+            "Ample Parking Space"
         ];
 
         const confirmationMessage = `
@@ -149,6 +149,11 @@ Dear ${customerName},
 Thank you for choosing ${propertyName} for your upcoming stay!
 Booking Amount: Rs. ${bookingAmount}/- (${numberToWords(bookingAmount)} Only)
 Balance Amount: Rs. ${balanceAmount}/- (${numberToWords(balanceAmount)} Only) to be given during check-in.
+
+Note:
+Rs. 500/- cleaning charges to be paid to the caretaker
+Rs. 6000/- refundable Security advance by cash or upi (preferably Cash) to be given during check-in
+
 We are pleased to confirm your booking as follows:
 • Property: ${propertyName}
 • Check-in Date: ${checkInDate}
