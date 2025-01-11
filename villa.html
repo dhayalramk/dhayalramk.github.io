@@ -129,59 +129,64 @@
         const balanceAmount = document.getElementById('total').value - document.getElementById('advancereceived').value ;
         const propertyName = "VillaHopper#70";
         const location = "VillaHopper#70, Adithyaram Signature City, Pattipulam, 100ft Road, ECR";
-        const checkInTime = "12:30 PM";
-        const checkOutTime = "11:30 AM";
+        const checkInTime = "02:00 PM";
+        const checkOutTime = "11:00 AM";
         const amenities = [
             "3 AC Bedrooms including a large Suite Room with attached Bathrooms",
             "3 King Size Beds and 4 Single Beds",
             "A Private Swimming Pool with an attached shower and restroom",
-            "Play Area with TT Table, Caram board and other board games",
+            "Play Area with TT Table, Carrom board and other board games",
             "Rooftop Gazebo for candle light dinner, or just to hang out with friends",
-            "Fully functional bar",
+            "Fully functional bar (we do not serve alcohol)",
             "Free Wifi",
-            "Inverter Backup upto 8 Hours for Fans and Lights not AC",
+            "Inverter backup of up to 8 hours for fans and lights, but not for AC",
             "Ample Parking Space"
         ];
 
         const confirmationMessage = `
-Booking Confirmation for ${propertyName} - ${checkInDate} to ${checkOutDate}
+Booking Confirmation: ${propertyName}
+Stay Period: ${checkInDate} to ${checkOutDate}
+
 Dear ${customerName},
-Thank you for choosing ${propertyName} for your upcoming stay!
-Booking Amount: Rs. ${bookingAmount}/- (${numberToWords(bookingAmount)} Only)
-Balance Amount: Rs. ${balanceAmount}/- (${numberToWords(balanceAmount)} Only) to be given during check-in.
 
-Note:
-Rs. 500/- cleaning charges to be paid to the caretaker
-Rs. 6000/- refundable Security advance by cash or upi (preferably Cash) to be given during check-in
+Thank you for choosing ${propertyName} for your stay! We are pleased to confirm your booking.
 
-We are pleased to confirm your booking as follows:
-• Property: ${propertyName}
-• Check-in Date: ${checkInDate}
-• Check-out Date: ${checkOutDate}
-• Location: ${location}
-Booking Details:
-• Guest Name: ${customerName}
-• Number of Guests: ${numberOfGuests}
-Check-in Instructions:
-• Check-in Time: ${checkInTime}
-• Check-out Time: ${checkOutTime}
-Amenities:
-• ${amenities.join('\n• ')}
-Contact Information:
-If you have any questions or need further assistance, please do not hesitate to contact us:
-• Phone: +91-8838581697
-• Email: villahopper70@gmail.com
-We look forward to hosting you and hope you have a wonderful stay at ${propertyName}.
-Best regards,
+**Booking Summary:**
+- **Advance Paid:** ₹${bookingAmount}/- (${numberToWords(bookingAmount)} Only)
+- **Balance Amount (Payable at Check-in):** ₹${balanceAmount}/- (${numberToWords(balanceAmount)} Only)
+
+**Additional Charges:**
+- ₹500/- Cleaning Fee (to be paid to the caretaker)
+- ₹6,000/- Refundable Security Deposit (preferably in cash or via UPI, payable at check-in)
+
+**Property Details:**
+- **Property Name:** ${propertyName}
+- **Location:** ${location}
+
+**Stay Details:**
+- **Check-in Date:** ${checkInDate}
+- **Check-out Date:** ${checkOutDate}
+- **Number of Guests:** ${numberOfGuests}
+- **Check-in Time:** ${checkInTime}
+- **Check-out Time:** ${checkOutTime}
+
+**Amenities:**
+${amenities.map(amenity => `- ${amenity}`).join('\n')}
+
+**Contact Information:**
+If you have any questions or need further assistance, please contact us:
+- **Phone:** +91-8838581697
+- **Email:** villahopper70@gmail.com
+
+We look forward to hosting you and hope you have a memorable stay at ${propertyName}.
+
+Warm regards,  
 R. Rathan Gangaa
-        `;
+`;
 
-        const confirmationMessageElement = document.getElementById('confirmationMessage');
-        confirmationMessageElement.textContent = confirmationMessage;
-        
-        const copyButton = document.getElementById('copyButton');
-        copyButton.style.display = 'block';
-    });
+const confirmationMessageElement = document.getElementById('confirmationMessage');
+confirmationMessageElement.textContent = confirmationMessage;
+
 </script>
 
 </body>
