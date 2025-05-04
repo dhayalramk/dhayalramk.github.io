@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Room Charges Calculator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    th, td { text-align: center; vertical-align: middle; }
+    select, input[type="date"] { width: 200px; }
+    textarea { width: 100%; height: 180px; }
+  </style>
+</head>
+<body>
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Room Charges Calculator</h2>
+
+  <div class="mb-3 row">
+    <label for="dateInput" class="col-sm-2 col-form-label">Choose Date:</label>
+    <div class="col-sm-4">
+      <input type="date" class="form-control" id="dateInput" onchange="updateDayFromDate(); suggestCombinations();">
+    </div>
+    <label class="col-sm-2 col-form-label">Detected Day:</label>
+    <div class="col-sm-4">
+      <input type="text" class="form-control" id="dayDisplay" readonly>
+    </div>
+  </div>
+
+  <table class="table table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Room Type</th>
+        <th>Capacity</th>
+        <th>Price per Unit (₹)</th>
+      </tr>
+    </thead>
+    <tbody id="chargesTable">
+      <tr>
+        <td>Standard Room</td><td>2</td><td>1200</td>
+      </tr>
+      <tr>
+        <td>Deluxe Room 1</td><td>3</td><td>1500</td>
+      </tr>
+      <tr>
+        <td>Deluxe Room 2</td><td>3</td><td>1500</td>
+      </tr>
+      <tr>
+        <td>Suite Room</td><td>6</td><td>2500</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="mb-3 row">
+    <label for="guestQty" class="col-sm-2 col-form-label">Number of Guests:</label>
+    <div class="col-sm-4">
+      <input type="number" class="form-control" id="guestQty" value="5" min="1" onchange="suggestCombinations();">
+    </div>
+  </div>
+
+  <h5 class="mt-4">Room Combination Suggestions</h5>
+  <textarea id="suggestionsText" readonly></textarea>
+  <button class="btn btn-primary mt-2" onclick="copySuggestions()">Copy to Clipboard</button>
+</div>
+
+<script>
+  const dayRates = {
+    "Saturday": 1350,
+    "Friday": 1200,
+    "Sunday": 1000,
+    "Monday": 900,
+    "Tuesday": 900,
+    "Wednesday": 900,
+    "Thursday": 900
+  };
+
+  function getDayName(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { weekday: 'long' });
+  }
+
+  function updateDayFromDate() {
+    const dateStr = document.getElementById("dateInput").value;
+    if (!dateStr) return;
+
+    const dayName = getDayName(dateStr);
+    document.getElementById("dayDisplay").value = dayName;
+  }
+
+  function suggestCombinations() {
+    const guests = parseInt(document.getElementById("guestQty").value) || 0;
+    const dateStr = document.getElementById("dateInput").value;
+    const dayName = dateStr ? getDayName(dateStr) : "Saturday";
+    const guestRate = dayRates[dayName] || 900;
+    const guestCost = guests * guestRate;
+
+    // Retrieve room data from the table
+    const table = document.getElementById("chargesTable");
+    const roomData = {};
+    for (let row of table.rows) {
+      const roomType = row.cells[0].innerText.trim();
+      const capacity = parseInt(row.cells[1].innerText.trim());
+      const price = parseInt(row.cells[2].innerText.trim());
+      roomData[roomType] = { capacity, price };
+    }
+
+    const suggestions = [];
+
+    const roomTypes = Object.keys(roomData);
+    const combinations = getCombinations(roomTypes);
+
+    combinations.forEach(combo => {
+      const totalCapacity = combo.reduce((sum, room) => sum + roomData[room].capacity, 0);
+      if (totalCapacity >= guests) {
+        const roomCost = combo.reduce((sum, room) => sum + roomData[room].price, 0);
+        const totalCost = roomCost + guestCost + 1000; // Adding ₹1000 for cleaning and maintenance
+        suggestions.push({
+          rooms: combo.join(", "),
+          capacity: totalCapacity,
+          totalCost
+        });
+      }
+    });
+
+    suggestions.sort((a, b) => a.totalCost - b.totalCost);
+    const topSuggestions = suggestions.slice(0, 5);
+
+	const suggestionsText = topSuggestions.map((s, index) =>
+	  `Option ${index + 1}: ${s.rooms} | Capacity: ${s.capacity} | Total Cost: ₹${s.totalCost}`
+	).join('\n');
+
+    const note1 = "This is a 4-bedroom private villa. Based on your group size, here are the best room combinations available:\n\n";
+    const note2 = "\n\nThe above prices includes Cleaning and other Miscellaneous Charges\nOther rooms will remain locked. You will enjoy private access to the entire villa, including all listed amenities.";
+
+    document.getElementById("suggestionsText").value = note1 + suggestionsText + note2;
+  }
+
+  function getCombinations(arr) {
+    const result = [];
+    const f = function(prefix, arr) {
+      for (let i = 0; i < arr.length; i++) {
+        result.push([...prefix, arr[i]]);
+        f([...prefix, arr[i]], arr.slice(i + 1));
+      }
+    }
+    f([], arr);
+    return result;
+  }
+
+  function copySuggestions() {
+    const text = document.getElementById("suggestionsText");
+    text.select();
+    text.setSelectionRange(0, 99999); // For mobile
+    document.execCommand("copy");
+    alert("Suggestions copied to clipboard!");
+  }
+
+  window.onload = () => {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("dateInput").value = today;
+    updateDayFromDate();
+    suggestCombinations();
+  };
+</script>
+</body>
+</html>
