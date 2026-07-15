@@ -6,133 +6,349 @@
   <title>3D Print Cost Calculator (INR)</title>
   <style>
     :root {
-      --page: #332f46;
-      --panel: #524d71;
-      --panel-strong: #46415f;
-      --line: #b9b2c8;
-      --text: #ead7aa;
-      --muted: #c9bed7;
-      --button: #dcc79b;
-      --button-hover: #efdcb3;
-      --danger: #ffcdc8;
+      --ink: #17151f;
+      --page: #f6f3ec;
+      --surface: #fffdf7;
+      --surface-strong: #ffffff;
+      --text: #201c2b;
+      --muted: #676071;
+      --line: #ded7ca;
+      --primary: #0f766e;
+      --primary-dark: #0a554f;
+      --primary-soft: #d9f2ec;
+      --accent: #d97706;
+      --accent-soft: #fff1d6;
+      --violet: #5b4b8a;
+      --violet-soft: #eee9ff;
+      --danger: #b42318;
+      --shadow: 0 22px 60px rgba(32, 28, 43, 0.14);
+      --shadow-soft: 0 12px 30px rgba(32, 28, 43, 0.08);
     }
 
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
-      background: var(--page);
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.2), transparent 32rem),
+        radial-gradient(circle at 85% 10%, rgba(217, 119, 6, 0.22), transparent 28rem),
+        linear-gradient(135deg, #fbf8f1 0%, #efe9dd 100%);
       color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
     }
 
-    main {
-      width: min(860px, calc(100% - 32px));
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.72;
+    }
+
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 42px 0 56px;
+      padding: 34px 0 56px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero-copy,
+    .total-card,
+    .panel {
+      border: 1px solid rgba(32, 28, 43, 0.08);
+      background: rgba(255, 253, 247, 0.9);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-copy {
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: clamp(26px, 4vw, 44px);
+      border-radius: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-copy::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15, 118, 110, 0.22), transparent 68%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      margin: 0 0 18px;
+      border: 1px solid rgba(15, 118, 110, 0.2);
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 8px 12px;
+      text-transform: uppercase;
     }
 
     h1 {
-      margin: 0 0 22px;
-      text-align: center;
-      font-size: clamp(2rem, 5vw, 3rem);
-      line-height: 1.1;
+      max-width: 760px;
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(2.4rem, 6vw, 5.25rem);
+      line-height: 0.95;
       letter-spacing: 0;
     }
 
-    label {
+    .hero-text {
+      max-width: 640px;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.16rem);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 34px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-chip {
+      min-height: 82px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.66);
+      padding: 14px;
+    }
+
+    .stat-chip strong,
+    .metric strong {
       display: block;
-      margin: 0 0 8px;
-      font-size: 1.1rem;
+      color: var(--ink);
+      font-size: 1.12rem;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-chip span,
+    .metric span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.82rem;
       font-weight: 700;
     }
 
-    input,
-    select {
-      width: 100%;
-      min-height: 46px;
-      border: 1px solid var(--line);
-      border-radius: 0;
-      background: var(--panel);
-      color: var(--text);
-      font: inherit;
-      padding: 10px 12px;
-      outline: none;
+    .total-card {
+      display: flex;
+      min-height: 300px;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 28px;
+      padding: clamp(24px, 4vw, 34px);
+      background:
+        linear-gradient(145deg, rgba(23, 21, 31, 0.96), rgba(52, 45, 72, 0.96)),
+        var(--ink);
+      color: #fffaf0;
+      box-shadow: var(--shadow);
     }
 
-    input::placeholder {
-      color: rgba(234, 215, 170, 0.48);
-    }
-
-    input:focus,
-    select:focus {
-      border-color: var(--button-hover);
-      box-shadow: 0 0 0 3px rgba(220, 199, 155, 0.18);
-    }
-
-    input[type="file"] {
-      padding: 10px;
-    }
-
-    .field {
-      margin-bottom: 20px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px 0;
-      margin-bottom: 20px;
-    }
-
-    .grid .field {
+    .total-label {
       margin: 0;
+      color: rgba(255, 250, 240, 0.7);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .grid .field:first-child input,
-    .grid .field:nth-child(3) input,
-    .grid .field:nth-child(5) input,
-    .grid .field:nth-child(7) input {
-      border-right: 0;
+    .total-value {
+      margin: 10px 0 4px;
+      color: #fff7d8;
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: 0;
+      font-variant-numeric: tabular-nums;
     }
 
-    .result-box {
-      margin: 64px 0 20px;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      padding: 30px 24px;
+    .total-note {
+      margin: 0;
+      color: rgba(255, 250, 240, 0.7);
     }
 
-    .result-row {
+    .mini-breakdown {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .mini-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      padding-bottom: 10px;
+      color: rgba(255, 250, 240, 0.78);
+      font-weight: 700;
+    }
+
+    .mini-row span:last-child {
+      color: #fff7d8;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .calculator-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      border-radius: 24px;
+      padding: clamp(20px, 3vw, 28px);
+    }
+
+    .panel + .panel {
+      margin-top: 24px;
+    }
+
+    .section-heading {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
       gap: 16px;
-      margin: 12px 0;
-      font-size: 1.2rem;
+      margin-bottom: 18px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 1.18rem;
+      letter-spacing: 0;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
       font-weight: 700;
     }
 
-    .result-row span:last-child {
-      white-space: nowrap;
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
     }
 
-    .result-row.total {
-      margin-top: 20px;
-      padding-top: 18px;
-      border-top: 1px solid rgba(185, 178, 200, 0.55);
-      font-size: 1.35rem;
+    .field {
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 7px;
+      color: #3a3448;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface-strong);
+      color: var(--text);
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    input::placeholder {
+      color: #a19aab;
+    }
+
+    input:hover {
+      border-color: #c4bbab;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.14);
+    }
+
+    .upload-box {
+      display: grid;
+      gap: 12px;
+      border: 1px dashed rgba(15, 118, 110, 0.42);
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(217, 242, 236, 0.8), rgba(255, 241, 214, 0.68));
+      padding: 18px;
+    }
+
+    input[type="file"] {
+      min-height: auto;
+      border: 0;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.78);
+      padding: 11px;
     }
 
     .preview {
       display: none;
-      margin-top: 12px;
       border: 1px solid var(--line);
-      background: var(--panel-strong);
+      border-radius: 18px;
+      background: #ffffff;
       padding: 10px;
+      overflow: hidden;
     }
 
     .preview img {
@@ -140,171 +356,356 @@
       width: 100%;
       max-height: 280px;
       object-fit: contain;
+      border-radius: 12px;
+    }
+
+    .breakdown-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .result-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #ffffff;
+      padding: 16px;
+      font-weight: 800;
+    }
+
+    .result-row span:first-child {
+      color: #3a3448;
+    }
+
+    .result-row span:last-child {
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .result-row.total {
+      border-color: rgba(15, 118, 110, 0.24);
+      background: linear-gradient(135deg, var(--primary-soft), #ffffff);
+      padding: 18px;
+      font-size: 1.18rem;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--violet-soft);
+      padding: 15px;
+    }
+
+    .metric:nth-child(2) {
+      background: var(--accent-soft);
     }
 
     .actions {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 1fr auto;
       gap: 12px;
-      align-items: center;
+      margin-top: 18px;
     }
 
     button {
-      min-height: 44px;
+      min-height: 52px;
       border: 0;
-      border-radius: 0;
-      background: var(--button);
-      color: #332f46;
-      font: inherit;
-      font-weight: 700;
-      padding: 10px 22px;
-      cursor: pointer;
+      border-radius: 16px;
+      color: #ffffff;
+      font-weight: 900;
+      padding: 12px 18px;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
     }
 
     button:hover {
-      background: var(--button-hover);
+      transform: translateY(-1px);
     }
 
-    button.secondary {
+    .primary-button {
+      background: linear-gradient(135deg, var(--primary), #115e59);
+      box-shadow: 0 16px 30px rgba(15, 118, 110, 0.24);
+    }
+
+    .primary-button:hover {
+      box-shadow: 0 18px 38px rgba(15, 118, 110, 0.3);
+    }
+
+    .secondary-button {
       border: 1px solid var(--line);
-      background: transparent;
+      background: #ffffff;
       color: var(--text);
     }
 
     .status {
+      grid-column: 1 / -1;
       min-height: 22px;
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 0.92rem;
+      font-weight: 700;
     }
 
     .error {
       color: var(--danger);
     }
 
-    @media (max-width: 680px) {
-      main {
-        width: min(100% - 24px, 860px);
-        padding-top: 28px;
-      }
+    .formula-note {
+      margin: 18px 0 0;
+      border-left: 4px solid var(--accent);
+      border-radius: 14px;
+      background: rgba(255, 241, 214, 0.72);
+      color: #5a3b0b;
+      padding: 14px 16px;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
 
-      .grid {
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .calculator-grid {
         grid-template-columns: 1fr;
-        gap: 16px;
       }
 
-      .grid .field:first-child input,
-      .grid .field:nth-child(3) input,
-      .grid .field:nth-child(5) input,
-      .grid .field:nth-child(7) input {
-        border-right: 1px solid var(--line);
+      .total-card {
+        min-height: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-shell {
+        width: min(100% - 24px, 1180px);
+        padding: 18px 0 34px;
       }
 
-      .result-box {
-        margin-top: 36px;
-        padding: 22px 18px;
+      .hero-copy,
+      .total-card,
+      .panel {
+        border-radius: 20px;
+      }
+
+      .hero-stats,
+      .field-grid,
+      .metrics,
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading {
+        display: block;
+      }
+
+      .section-heading p {
+        margin-top: 4px;
       }
 
       .result-row {
-        display: block;
-      }
-
-      .result-row span {
-        display: block;
-      }
-
-      .result-row span:last-child {
-        margin-top: 4px;
+        grid-template-columns: 1fr;
+        gap: 3px;
       }
     }
   </style>
 </head>
 <body>
-  <main id="captureArea">
-    <h1>3D Print Cost Calculator (INR)</h1>
+  <main class="page-shell" id="captureArea">
+    <section class="hero" aria-labelledby="pageTitle">
+      <div class="hero-copy">
+        <div>
+          <p class="eyebrow">3D printing estimate</p>
+          <h1 id="pageTitle">Print pricing that feels ready to send.</h1>
+          <p class="hero-text">Enter print time, filament use, electricity, and upkeep rates. The total updates instantly in INR, and you can save a clean screenshot for the customer.</p>
+        </div>
 
-    <div class="field">
-      <label for="fileName">Save As (file name):</label>
-      <input id="fileName" type="text" placeholder="Enter file name..." autocomplete="off">
-    </div>
-
-    <div class="grid">
-      <div class="field">
-        <label for="hours">Hours:</label>
-        <input id="hours" type="number" min="0" step="1" value="0" inputmode="numeric">
-      </div>
-
-      <div class="field">
-        <label for="minutes">Minutes:</label>
-        <input id="minutes" type="number" min="0" max="59" step="1" value="15" inputmode="numeric">
-      </div>
-
-      <div class="field">
-        <label for="filamentCost">Filament Cost (per 1000g):</label>
-        <input id="filamentCost" type="number" min="0" step="0.01" value="1000" inputmode="decimal">
-      </div>
-
-      <div class="field">
-        <label for="filamentUsed">Filament Used (grams):</label>
-        <input id="filamentUsed" type="number" min="0" step="0.01" value="2" inputmode="decimal">
+        <div class="hero-stats" aria-label="Quick print summary">
+          <div class="stat-chip">
+            <strong id="durationDisplay">15 min</strong>
+            <span>Print time</span>
+          </div>
+          <div class="stat-chip">
+            <strong id="gramRateDisplay">₹1.00/g</strong>
+            <span>Material rate</span>
+          </div>
+          <div class="stat-chip">
+            <strong id="costPerHourDisplay">₹28.96/hr</strong>
+            <span>Effective rate</span>
+          </div>
+        </div>
       </div>
 
-      <div class="field">
-        <label for="electricityRate">Electricity Rate (per kWh):</label>
-        <input id="electricityRate" type="number" min="0" step="0.01" value="8" inputmode="decimal">
-      </div>
+      <aside class="total-card" aria-live="polite">
+        <div>
+          <p class="total-label">Estimated total</p>
+          <div class="total-value" id="heroTotal">₹0.00</div>
+          <p class="total-note">Includes material, electricity, machine upkeep, and extras.</p>
+        </div>
 
-      <div class="field">
-        <label for="printerWatts">Printer Power (watts):</label>
-        <input id="printerWatts" type="number" min="0" step="1" value="120" inputmode="numeric">
-      </div>
-
-      <div class="field">
-        <label for="machineRate">Machine & Upkeep (per hour):</label>
-        <input id="machineRate" type="number" min="0" step="0.01" value="20" inputmode="decimal">
-      </div>
-
-      <div class="field">
-        <label for="extraCost">Extra Cost:</label>
-        <input id="extraCost" type="number" min="0" step="0.01" value="0" inputmode="decimal">
-      </div>
-    </div>
-
-    <div class="field">
-      <label for="screenshot">Attach Screenshot (image upload):</label>
-      <input id="screenshot" type="file" accept="image/*">
-      <div class="preview" id="preview">
-        <img id="previewImage" alt="Uploaded screenshot preview">
-      </div>
-    </div>
-
-    <section class="result-box" aria-live="polite">
-      <div class="result-row">
-        <span>Filament Cost:</span>
-        <span id="filamentTotal">₹0.00</span>
-      </div>
-      <div class="result-row">
-        <span>Electricity Cost:</span>
-        <span id="electricityTotal">₹0.00</span>
-      </div>
-      <div class="result-row">
-        <span>Machine & Upkeep Cost:</span>
-        <span id="machineTotal">₹0.00</span>
-      </div>
-      <div class="result-row">
-        <span>Extra Cost:</span>
-        <span id="extraTotal">₹0.00</span>
-      </div>
-      <div class="result-row total">
-        <span>Total Cost:</span>
-        <span id="grandTotal">₹0.00</span>
-      </div>
+        <div class="mini-breakdown">
+          <div class="mini-row">
+            <span>Filament</span>
+            <span id="heroFilament">₹0.00</span>
+          </div>
+          <div class="mini-row">
+            <span>Electricity</span>
+            <span id="heroElectricity">₹0.00</span>
+          </div>
+          <div class="mini-row">
+            <span>Machine & upkeep</span>
+            <span id="heroMachine">₹0.00</span>
+          </div>
+        </div>
+      </aside>
     </section>
 
-    <div class="actions">
-      <button id="captureButton" type="button">Take Page Screenshot</button>
-      <button id="resetButton" class="secondary" type="button">Reset</button>
-      <span class="status" id="status"></span>
-    </div>
+    <section class="calculator-grid">
+      <div>
+        <section class="panel" aria-labelledby="jobDetails">
+          <div class="section-heading">
+            <h2 id="jobDetails">Job Details</h2>
+            <p>Name and slicer values</p>
+          </div>
+
+          <div class="field-grid">
+            <div class="field full">
+              <label for="fileName">Save As <span class="hint">used for screenshot file</span></label>
+              <input id="fileName" type="text" placeholder="Enter file name..." autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label for="hours">Hours</label>
+              <input id="hours" type="number" min="0" step="1" value="0" inputmode="numeric">
+            </div>
+
+            <div class="field">
+              <label for="minutes">Minutes</label>
+              <input id="minutes" type="number" min="0" max="59" step="1" value="15" inputmode="numeric">
+            </div>
+
+            <div class="field">
+              <label for="filamentUsed">Filament Used <span class="hint">grams</span></label>
+              <input id="filamentUsed" type="number" min="0" step="0.01" value="2" inputmode="decimal">
+            </div>
+
+            <div class="field">
+              <label for="extraCost">Extra Cost <span class="hint">optional</span></label>
+              <input id="extraCost" type="number" min="0" step="0.01" value="0" inputmode="decimal">
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="rateSettings">
+          <div class="section-heading">
+            <h2 id="rateSettings">Rate Settings</h2>
+            <p>Adjust once, reuse often</p>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="filamentCost">Filament Cost <span class="hint">per 1000g</span></label>
+              <input id="filamentCost" type="number" min="0" step="0.01" value="1000" inputmode="decimal">
+            </div>
+
+            <div class="field">
+              <label for="electricityRate">Electricity Rate <span class="hint">per kWh</span></label>
+              <input id="electricityRate" type="number" min="0" step="0.01" value="8" inputmode="decimal">
+            </div>
+
+            <div class="field">
+              <label for="printerWatts">Printer Power <span class="hint">watts</span></label>
+              <input id="printerWatts" type="number" min="0" step="1" value="120" inputmode="numeric">
+            </div>
+
+            <div class="field">
+              <label for="machineRate">Machine & Upkeep <span class="hint">per hour</span></label>
+              <input id="machineRate" type="number" min="0" step="0.01" value="20" inputmode="decimal">
+            </div>
+          </div>
+
+          <p class="formula-note">Formula: filament + electricity + machine upkeep + extra cost. Electricity uses print hours x printer watts / 1000 x unit rate.</p>
+        </section>
+
+        <section class="panel" aria-labelledby="attachmentPanel">
+          <div class="section-heading">
+            <h2 id="attachmentPanel">Attachment</h2>
+            <p>Add slicer screenshot</p>
+          </div>
+
+          <div class="upload-box">
+            <label for="screenshot">Attach Screenshot <span class="hint">image upload</span></label>
+            <input id="screenshot" type="file" accept="image/*">
+            <div class="preview" id="preview">
+              <img id="previewImage" alt="Uploaded screenshot preview">
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="panel" aria-labelledby="breakdownHeading">
+          <div class="section-heading">
+            <h2 id="breakdownHeading">Cost Breakdown</h2>
+            <p>Live calculation</p>
+          </div>
+
+          <div class="breakdown-list" aria-live="polite">
+            <div class="result-row">
+              <span>Filament Cost</span>
+              <span id="filamentTotal">₹0.00</span>
+            </div>
+            <div class="result-row">
+              <span>Electricity Cost</span>
+              <span id="electricityTotal">₹0.00</span>
+            </div>
+            <div class="result-row">
+              <span>Machine & Upkeep Cost</span>
+              <span id="machineTotal">₹0.00</span>
+            </div>
+            <div class="result-row">
+              <span>Extra Cost</span>
+              <span id="extraTotal">₹0.00</span>
+            </div>
+            <div class="result-row total">
+              <span>Total Cost</span>
+              <span id="grandTotal">₹0.00</span>
+            </div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric">
+              <strong id="durationMetric">0.25 hr</strong>
+              <span>Total duration</span>
+            </div>
+            <div class="metric">
+              <strong id="weightMetric">2 g</strong>
+              <span>Filament weight</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="captureButton" class="primary-button" type="button">Take Page Screenshot</button>
+            <button id="resetButton" class="secondary-button" type="button">Reset</button>
+            <span class="status" id="status"></span>
+          </div>
+        </section>
+      </aside>
+    </section>
   </main>
 
   <script src="assets/plugins/html2canvas.min.js"></script>
@@ -326,7 +727,16 @@
       electricityTotal: document.getElementById('electricityTotal'),
       machineTotal: document.getElementById('machineTotal'),
       extraTotal: document.getElementById('extraTotal'),
-      grandTotal: document.getElementById('grandTotal')
+      grandTotal: document.getElementById('grandTotal'),
+      heroTotal: document.getElementById('heroTotal'),
+      heroFilament: document.getElementById('heroFilament'),
+      heroElectricity: document.getElementById('heroElectricity'),
+      heroMachine: document.getElementById('heroMachine'),
+      durationDisplay: document.getElementById('durationDisplay'),
+      gramRateDisplay: document.getElementById('gramRateDisplay'),
+      costPerHourDisplay: document.getElementById('costPerHourDisplay'),
+      durationMetric: document.getElementById('durationMetric'),
+      weightMetric: document.getElementById('weightMetric')
     };
 
     const status = document.getElementById('status');
@@ -350,6 +760,12 @@
       }).format(value);
     }
 
+    function formatNumber(value, maximumFractionDigits = 2) {
+      return new Intl.NumberFormat('en-IN', {
+        maximumFractionDigits
+      }).format(value);
+    }
+
     function sanitizeFileName(value) {
       const cleaned = value.trim().replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, '-');
       return cleaned || '3d-print-cost';
@@ -358,18 +774,30 @@
     function calculateCost() {
       const hours = numberFrom(fields.hours);
       const minutes = Math.min(numberFrom(fields.minutes), 59);
+      const filamentUsed = numberFrom(fields.filamentUsed);
       const durationHours = hours + (minutes / 60);
-      const filamentTotal = (numberFrom(fields.filamentCost) / 1000) * numberFrom(fields.filamentUsed);
+      const gramRate = numberFrom(fields.filamentCost) / 1000;
+      const filamentTotal = gramRate * filamentUsed;
       const electricityTotal = durationHours * (numberFrom(fields.printerWatts) / 1000) * numberFrom(fields.electricityRate);
       const machineTotal = durationHours * numberFrom(fields.machineRate);
       const extraTotal = numberFrom(fields.extraCost);
       const grandTotal = filamentTotal + electricityTotal + machineTotal + extraTotal;
+      const costPerHour = durationHours > 0 ? grandTotal / durationHours : 0;
 
       outputs.filamentTotal.textContent = formatINR(filamentTotal);
       outputs.electricityTotal.textContent = formatINR(electricityTotal);
       outputs.machineTotal.textContent = formatINR(machineTotal);
       outputs.extraTotal.textContent = formatINR(extraTotal);
       outputs.grandTotal.textContent = formatINR(grandTotal);
+      outputs.heroTotal.textContent = formatINR(grandTotal);
+      outputs.heroFilament.textContent = formatINR(filamentTotal);
+      outputs.heroElectricity.textContent = formatINR(electricityTotal);
+      outputs.heroMachine.textContent = formatINR(machineTotal);
+      outputs.durationDisplay.textContent = durationHours >= 1 ? `${formatNumber(durationHours)} hr` : `${minutes} min`;
+      outputs.gramRateDisplay.textContent = `${formatINR(gramRate)}/g`;
+      outputs.costPerHourDisplay.textContent = `${formatINR(costPerHour)}/hr`;
+      outputs.durationMetric.textContent = `${formatNumber(durationHours)} hr`;
+      outputs.weightMetric.textContent = `${formatNumber(filamentUsed)} g`;
     }
 
     async function takeScreenshot() {
@@ -386,7 +814,7 @@
 
       try {
         const canvas = await html2canvas(document.getElementById('captureArea'), {
-          backgroundColor: '#332f46',
+          backgroundColor: '#f6f3ec',
           scale: Math.min(window.devicePixelRatio || 1, 2)
         });
         const link = document.createElement('a');
