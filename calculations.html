@@ -2,163 +2,442 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Room Charges Calculator</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Print Cost Calculator (INR)</title>
   <style>
-    th, td { text-align: center; vertical-align: middle; }
-    select, input[type="date"] { width: 200px; }
-    textarea { width: 100%; height: 180px; }
+    :root {
+      --page: #332f46;
+      --panel: #524d71;
+      --panel-strong: #46415f;
+      --line: #b9b2c8;
+      --text: #ead7aa;
+      --muted: #c9bed7;
+      --button: #dcc79b;
+      --button-hover: #efdcb3;
+      --danger: #ffcdc8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--page);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    main {
+      width: min(860px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 56px;
+    }
+
+    h1 {
+      margin: 0 0 22px;
+      text-align: center;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    label {
+      display: block;
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--panel);
+      color: var(--text);
+      font: inherit;
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: rgba(234, 215, 170, 0.48);
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--button-hover);
+      box-shadow: 0 0 0 3px rgba(220, 199, 155, 0.18);
+    }
+
+    input[type="file"] {
+      padding: 10px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 0;
+      margin-bottom: 20px;
+    }
+
+    .grid .field {
+      margin: 0;
+    }
+
+    .grid .field:first-child input,
+    .grid .field:nth-child(3) input,
+    .grid .field:nth-child(5) input,
+    .grid .field:nth-child(7) input {
+      border-right: 0;
+    }
+
+    .result-box {
+      margin: 64px 0 20px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 30px 24px;
+    }
+
+    .result-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 12px 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .result-row span:last-child {
+      white-space: nowrap;
+    }
+
+    .result-row.total {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(185, 178, 200, 0.55);
+      font-size: 1.35rem;
+    }
+
+    .preview {
+      display: none;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      padding: 10px;
+    }
+
+    .preview img {
+      display: block;
+      width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 0;
+      background: var(--button);
+      color: #332f46;
+      font: inherit;
+      font-weight: 700;
+      padding: 10px 22px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: var(--button-hover);
+    }
+
+    button.secondary {
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+    }
+
+    .status {
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .error {
+      color: var(--danger);
+    }
+
+    @media (max-width: 680px) {
+      main {
+        width: min(100% - 24px, 860px);
+        padding-top: 28px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .grid .field:first-child input,
+      .grid .field:nth-child(3) input,
+      .grid .field:nth-child(5) input,
+      .grid .field:nth-child(7) input {
+        border-right: 1px solid var(--line);
+      }
+
+      .result-box {
+        margin-top: 36px;
+        padding: 22px 18px;
+      }
+
+      .result-row {
+        display: block;
+      }
+
+      .result-row span {
+        display: block;
+      }
+
+      .result-row span:last-child {
+        margin-top: 4px;
+      }
+    }
   </style>
 </head>
 <body>
-<div class="container mt-5">
-  <h2 class="text-center mb-4">Room Charges Calculator</h2>
+  <main id="captureArea">
+    <h1>3D Print Cost Calculator (INR)</h1>
 
-  <div class="mb-3 row">
-    <label for="dateInput" class="col-sm-2 col-form-label">Choose Date:</label>
-    <div class="col-sm-4">
-      <input type="date" class="form-control" id="dateInput" onchange="updateDayFromDate(); suggestCombinations();">
+    <div class="field">
+      <label for="fileName">Save As (file name):</label>
+      <input id="fileName" type="text" placeholder="Enter file name..." autocomplete="off">
     </div>
-    <label class="col-sm-2 col-form-label">Detected Day:</label>
-    <div class="col-sm-4">
-      <input type="text" class="form-control" id="dayDisplay" readonly>
+
+    <div class="grid">
+      <div class="field">
+        <label for="hours">Hours:</label>
+        <input id="hours" type="number" min="0" step="1" value="0" inputmode="numeric">
+      </div>
+
+      <div class="field">
+        <label for="minutes">Minutes:</label>
+        <input id="minutes" type="number" min="0" max="59" step="1" value="15" inputmode="numeric">
+      </div>
+
+      <div class="field">
+        <label for="filamentCost">Filament Cost (per 1000g):</label>
+        <input id="filamentCost" type="number" min="0" step="0.01" value="1000" inputmode="decimal">
+      </div>
+
+      <div class="field">
+        <label for="filamentUsed">Filament Used (grams):</label>
+        <input id="filamentUsed" type="number" min="0" step="0.01" value="2" inputmode="decimal">
+      </div>
+
+      <div class="field">
+        <label for="electricityRate">Electricity Rate (per kWh):</label>
+        <input id="electricityRate" type="number" min="0" step="0.01" value="8" inputmode="decimal">
+      </div>
+
+      <div class="field">
+        <label for="printerWatts">Printer Power (watts):</label>
+        <input id="printerWatts" type="number" min="0" step="1" value="120" inputmode="numeric">
+      </div>
+
+      <div class="field">
+        <label for="machineRate">Machine & Upkeep (per hour):</label>
+        <input id="machineRate" type="number" min="0" step="0.01" value="20" inputmode="decimal">
+      </div>
+
+      <div class="field">
+        <label for="extraCost">Extra Cost:</label>
+        <input id="extraCost" type="number" min="0" step="0.01" value="0" inputmode="decimal">
+      </div>
     </div>
-  </div>
 
-  <table class="table table-bordered">
-    <thead class="table-dark">
-      <tr>
-        <th>Room Type</th>
-        <th>Capacity</th>
-        <th>Price per Unit (₹)</th>
-      </tr>
-    </thead>
-    <tbody id="chargesTable">
-      <tr>
-        <td>Standard Room</td><td>2</td><td>1200</td>
-      </tr>
-      <tr>
-        <td>Deluxe Room 1</td><td>3</td><td>1500</td>
-      </tr>
-      <tr>
-        <td>Deluxe Room 2</td><td>3</td><td>1500</td>
-      </tr>
-      <tr>
-        <td>Suite Room</td><td>6</td><td>2500</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="mb-3 row">
-    <label for="guestQty" class="col-sm-2 col-form-label">Number of Guests:</label>
-    <div class="col-sm-4">
-      <input type="number" class="form-control" id="guestQty" value="5" min="1" onchange="suggestCombinations();">
+    <div class="field">
+      <label for="screenshot">Attach Screenshot (image upload):</label>
+      <input id="screenshot" type="file" accept="image/*">
+      <div class="preview" id="preview">
+        <img id="previewImage" alt="Uploaded screenshot preview">
+      </div>
     </div>
-  </div>
 
-  <h5 class="mt-4">Room Combination Suggestions</h5>
-  <textarea id="suggestionsText" readonly></textarea>
-  <button class="btn btn-primary mt-2" onclick="copySuggestions()">Copy to Clipboard</button>
-</div>
+    <section class="result-box" aria-live="polite">
+      <div class="result-row">
+        <span>Filament Cost:</span>
+        <span id="filamentTotal">₹0.00</span>
+      </div>
+      <div class="result-row">
+        <span>Electricity Cost:</span>
+        <span id="electricityTotal">₹0.00</span>
+      </div>
+      <div class="result-row">
+        <span>Machine & Upkeep Cost:</span>
+        <span id="machineTotal">₹0.00</span>
+      </div>
+      <div class="result-row">
+        <span>Extra Cost:</span>
+        <span id="extraTotal">₹0.00</span>
+      </div>
+      <div class="result-row total">
+        <span>Total Cost:</span>
+        <span id="grandTotal">₹0.00</span>
+      </div>
+    </section>
 
-<script>
-  const dayRates = {
-    "Saturday": 1350,
-    "Friday": 1200,
-    "Sunday": 1000,
-    "Monday": 900,
-    "Tuesday": 900,
-    "Wednesday": 900,
-    "Thursday": 900
-  };
+    <div class="actions">
+      <button id="captureButton" type="button">Take Page Screenshot</button>
+      <button id="resetButton" class="secondary" type="button">Reset</button>
+      <span class="status" id="status"></span>
+    </div>
+  </main>
 
-  function getDayName(dateStr) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { weekday: 'long' });
-  }
+  <script src="assets/plugins/html2canvas.min.js"></script>
+  <script>
+    const fields = {
+      fileName: document.getElementById('fileName'),
+      hours: document.getElementById('hours'),
+      minutes: document.getElementById('minutes'),
+      filamentCost: document.getElementById('filamentCost'),
+      filamentUsed: document.getElementById('filamentUsed'),
+      electricityRate: document.getElementById('electricityRate'),
+      printerWatts: document.getElementById('printerWatts'),
+      machineRate: document.getElementById('machineRate'),
+      extraCost: document.getElementById('extraCost')
+    };
 
-  function updateDayFromDate() {
-    const dateStr = document.getElementById("dateInput").value;
-    if (!dateStr) return;
+    const outputs = {
+      filamentTotal: document.getElementById('filamentTotal'),
+      electricityTotal: document.getElementById('electricityTotal'),
+      machineTotal: document.getElementById('machineTotal'),
+      extraTotal: document.getElementById('extraTotal'),
+      grandTotal: document.getElementById('grandTotal')
+    };
 
-    const dayName = getDayName(dateStr);
-    document.getElementById("dayDisplay").value = dayName;
-  }
+    const status = document.getElementById('status');
+    const captureButton = document.getElementById('captureButton');
+    const resetButton = document.getElementById('resetButton');
+    const screenshotInput = document.getElementById('screenshot');
+    const preview = document.getElementById('preview');
+    const previewImage = document.getElementById('previewImage');
 
-  function suggestCombinations() {
-    const guests = parseInt(document.getElementById("guestQty").value) || 0;
-    const dateStr = document.getElementById("dateInput").value;
-    const dayName = dateStr ? getDayName(dateStr) : "Saturday";
-    const guestRate = dayRates[dayName] || 900;
-    const guestCost = guests * guestRate;
-
-    // Retrieve room data from the table
-    const table = document.getElementById("chargesTable");
-    const roomData = {};
-    for (let row of table.rows) {
-      const roomType = row.cells[0].innerText.trim();
-      const capacity = parseInt(row.cells[1].innerText.trim());
-      const price = parseInt(row.cells[2].innerText.trim());
-      roomData[roomType] = { capacity, price };
+    function numberFrom(input) {
+      const value = Number.parseFloat(input.value);
+      return Number.isFinite(value) && value > 0 ? value : 0;
     }
 
-    const suggestions = [];
+    function formatINR(value) {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    }
 
-    const roomTypes = Object.keys(roomData);
-    const combinations = getCombinations(roomTypes);
+    function sanitizeFileName(value) {
+      const cleaned = value.trim().replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, '-');
+      return cleaned || '3d-print-cost';
+    }
 
-    combinations.forEach(combo => {
-      const totalCapacity = combo.reduce((sum, room) => sum + roomData[room].capacity, 0);
-      if (totalCapacity >= guests) {
-        const roomCost = combo.reduce((sum, room) => sum + roomData[room].price, 0);
-        const totalCost = roomCost + guestCost + 1000; // Adding ₹1000 for cleaning and maintenance
-        suggestions.push({
-          rooms: combo.join(", "),
-          capacity: totalCapacity,
-          totalCost
-        });
+    function calculateCost() {
+      const hours = numberFrom(fields.hours);
+      const minutes = Math.min(numberFrom(fields.minutes), 59);
+      const durationHours = hours + (minutes / 60);
+      const filamentTotal = (numberFrom(fields.filamentCost) / 1000) * numberFrom(fields.filamentUsed);
+      const electricityTotal = durationHours * (numberFrom(fields.printerWatts) / 1000) * numberFrom(fields.electricityRate);
+      const machineTotal = durationHours * numberFrom(fields.machineRate);
+      const extraTotal = numberFrom(fields.extraCost);
+      const grandTotal = filamentTotal + electricityTotal + machineTotal + extraTotal;
+
+      outputs.filamentTotal.textContent = formatINR(filamentTotal);
+      outputs.electricityTotal.textContent = formatINR(electricityTotal);
+      outputs.machineTotal.textContent = formatINR(machineTotal);
+      outputs.extraTotal.textContent = formatINR(extraTotal);
+      outputs.grandTotal.textContent = formatINR(grandTotal);
+    }
+
+    async function takeScreenshot() {
+      status.className = 'status';
+
+      if (!window.html2canvas) {
+        status.textContent = 'Screenshot library could not load. Please check internet connection.';
+        status.classList.add('error');
+        return;
       }
+
+      status.textContent = 'Preparing screenshot...';
+      captureButton.disabled = true;
+
+      try {
+        const canvas = await html2canvas(document.getElementById('captureArea'), {
+          backgroundColor: '#332f46',
+          scale: Math.min(window.devicePixelRatio || 1, 2)
+        });
+        const link = document.createElement('a');
+        link.download = `${sanitizeFileName(fields.fileName.value)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        status.textContent = 'Screenshot saved.';
+      } catch (error) {
+        status.textContent = 'Unable to create screenshot in this browser.';
+        status.classList.add('error');
+      } finally {
+        captureButton.disabled = false;
+      }
+    }
+
+    function resetCalculator() {
+      fields.fileName.value = '';
+      fields.hours.value = '0';
+      fields.minutes.value = '15';
+      fields.filamentCost.value = '1000';
+      fields.filamentUsed.value = '2';
+      fields.electricityRate.value = '8';
+      fields.printerWatts.value = '120';
+      fields.machineRate.value = '20';
+      fields.extraCost.value = '0';
+      screenshotInput.value = '';
+      preview.style.display = 'none';
+      previewImage.removeAttribute('src');
+      status.textContent = '';
+      calculateCost();
+    }
+
+    Object.values(fields).forEach((field) => {
+      field.addEventListener('input', calculateCost);
     });
 
-    suggestions.sort((a, b) => a.totalCost - b.totalCost);
-    const topSuggestions = suggestions.slice(0, 5);
-
-	const suggestionsText = topSuggestions.map((s, index) =>
-	  `Option ${index + 1}: ${s.rooms} | Capacity: ${s.capacity} | Total Cost: ₹${s.totalCost}`
-	).join('\n');
-
-    const note1 = "This is a 4-bedroom private villa. Based on your group size, here are the best room combinations available:\n\n";
-    const note2 = "\n\nThe above prices includes Cleaning and other Miscellaneous Charges\nOther rooms will remain locked. You will enjoy private access to the entire villa, including all listed amenities.";
-
-    document.getElementById("suggestionsText").value = note1 + suggestionsText + note2;
-  }
-
-  function getCombinations(arr) {
-    const result = [];
-    const f = function(prefix, arr) {
-      for (let i = 0; i < arr.length; i++) {
-        result.push([...prefix, arr[i]]);
-        f([...prefix, arr[i]], arr.slice(i + 1));
+    screenshotInput.addEventListener('change', () => {
+      const file = screenshotInput.files && screenshotInput.files[0];
+      if (!file) {
+        preview.style.display = 'none';
+        previewImage.removeAttribute('src');
+        return;
       }
-    }
-    f([], arr);
-    return result;
-  }
 
-  function copySuggestions() {
-    const text = document.getElementById("suggestionsText");
-    text.select();
-    text.setSelectionRange(0, 99999); // For mobile
-    document.execCommand("copy");
-    alert("Suggestions copied to clipboard!");
-  }
+      previewImage.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+    });
 
-  window.onload = () => {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById("dateInput").value = today;
-    updateDayFromDate();
-    suggestCombinations();
-  };
-</script>
+    captureButton.addEventListener('click', takeScreenshot);
+    resetButton.addEventListener('click', resetCalculator);
+    calculateCost();
+  </script>
 </body>
 </html>
