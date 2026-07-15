@@ -9,26 +9,21 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
-  <title>3D Print Cost Calculator (INR)</title>
+  <title>3D Print Quote Calculator</title>
   <style>
     :root {
-      --ink: #17151f;
-      --page: #f6f3ec;
-      --surface: #fffdf7;
-      --surface-strong: #ffffff;
-      --text: #201c2b;
-      --muted: #676071;
-      --line: #ded7ca;
+      --page: #f5f7f4;
+      --surface: #ffffff;
+      --surface-soft: #f8faf7;
+      --text: #17201d;
+      --muted: #63706b;
+      --line: #dce4df;
       --primary: #0f766e;
       --primary-dark: #0a554f;
-      --primary-soft: #d9f2ec;
+      --primary-soft: #e1f4ef;
       --accent: #d97706;
-      --accent-soft: #fff1d6;
-      --violet: #5b4b8a;
-      --violet-soft: #eee9ff;
       --danger: #b42318;
-      --shadow: 0 22px 60px rgba(32, 28, 43, 0.14);
-      --shadow-soft: 0 12px 30px rgba(32, 28, 43, 0.08);
+      --shadow: 0 16px 38px rgba(23, 32, 29, 0.09);
     }
 
     * {
@@ -43,17 +38,15 @@
       margin: 0;
       min-height: 100dvh;
       overflow-x: hidden;
-      background:
-        radial-gradient(circle at top left, rgba(15, 118, 110, 0.2), transparent 32rem),
-        radial-gradient(circle at 85% 10%, rgba(217, 119, 6, 0.22), transparent 28rem),
-        linear-gradient(135deg, #fbf8f1 0%, #efe9dd 100%);
+      background: var(--page);
       color: var(--text);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.5;
     }
 
     button,
-    input {
+    input,
+    select {
       font: inherit;
     }
 
@@ -66,219 +59,118 @@
       opacity: 0.72;
     }
 
-    .page-shell {
-      width: min(1180px, calc(100% - 32px));
+    .app {
+      width: min(760px, calc(100% - 28px));
       margin: 0 auto;
-      padding: calc(34px + env(safe-area-inset-top)) 0 calc(56px + env(safe-area-inset-bottom));
+      padding: calc(20px + env(safe-area-inset-top)) 0 calc(36px + env(safe-area-inset-bottom));
     }
 
-    .hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-      gap: 24px;
-      align-items: stretch;
-      margin-bottom: 24px;
-    }
-
-    .hero-copy,
-    .total-card,
-    .panel {
-      border: 1px solid rgba(32, 28, 43, 0.08);
-      background: rgba(255, 253, 247, 0.9);
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(16px);
-    }
-
-    .hero-copy {
-      min-height: 300px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: clamp(26px, 4vw, 44px);
-      border-radius: 28px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-copy::after {
-      content: "";
-      position: absolute;
-      inset: auto -80px -120px auto;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(15, 118, 110, 0.22), transparent 68%);
-      pointer-events: none;
-    }
-
-    .eyebrow {
-      width: fit-content;
-      margin: 0 0 18px;
-      border: 1px solid rgba(15, 118, 110, 0.2);
-      border-radius: 999px;
-      background: var(--primary-soft);
-      color: var(--primary-dark);
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      padding: 8px 12px;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      max-width: 760px;
-      margin: 0;
-      color: var(--ink);
-      font-size: clamp(2.4rem, 6vw, 5.25rem);
-      line-height: 0.95;
-      letter-spacing: 0;
-    }
-
-    .hero-text {
-      max-width: 640px;
-      margin: 20px 0 0;
-      color: var(--muted);
-      font-size: clamp(1rem, 2vw, 1.16rem);
-    }
-
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 34px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .stat-chip {
-      min-height: 82px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.66);
-      padding: 14px;
-    }
-
-    .stat-chip strong,
-    .metric strong {
-      display: block;
-      color: var(--ink);
-      font-size: 1.12rem;
-      line-height: 1.1;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .stat-chip span,
-    .metric span {
-      display: block;
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-
-    .total-card {
-      display: flex;
-      min-height: 300px;
-      flex-direction: column;
-      justify-content: space-between;
-      border-radius: 28px;
-      padding: clamp(24px, 4vw, 34px);
-      background:
-        linear-gradient(145deg, rgba(23, 21, 31, 0.96), rgba(52, 45, 72, 0.96)),
-        var(--ink);
-      color: #fffaf0;
-      box-shadow: var(--shadow);
-    }
-
-    .total-label {
-      margin: 0;
-      color: rgba(255, 250, 240, 0.7);
-      font-size: 0.9rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .total-value {
-      margin: 10px 0 4px;
-      color: #fff7d8;
-      font-size: clamp(3rem, 8vw, 5rem);
-      font-weight: 900;
-      line-height: 0.95;
-      letter-spacing: 0;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .total-note {
-      margin: 0;
-      color: rgba(255, 250, 240, 0.7);
-    }
-
-    .mini-breakdown {
-      display: grid;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
-    .mini-row {
+    .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-      padding-bottom: 10px;
-      color: rgba(255, 250, 240, 0.78);
-      font-weight: 700;
+      margin-bottom: 14px;
     }
 
-    .mini-row span:last-child {
-      color: #fff7d8;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
+    .brand {
+      min-width: 0;
     }
 
-    .calculator-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
-      gap: 24px;
-      align-items: start;
+    .eyebrow {
+      margin: 0 0 2px;
+      color: var(--primary-dark);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .panel {
-      border-radius: 24px;
-      padding: clamp(20px, 3vw, 28px);
-    }
-
-    .panel + .panel {
-      margin-top: 24px;
-    }
-
-    .section-heading {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    .section-heading h2 {
+    h1 {
       margin: 0;
-      color: var(--ink);
-      font-size: 1.18rem;
+      color: var(--text);
+      font-size: clamp(1.55rem, 7vw, 2.45rem);
+      line-height: 1.05;
       letter-spacing: 0;
     }
 
-    .section-heading p {
+    .summary {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      border: 1px solid rgba(15, 118, 110, 0.22);
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .summary-label {
       margin: 0;
-      color: var(--muted);
-      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .quote-total {
+      margin: 2px 0 12px;
+      color: #ffffff;
+      font-size: clamp(3rem, 17vw, 5rem);
+      font-weight: 900;
+      line-height: 0.95;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .summary-chip {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 12px;
+    }
+
+    .summary-chip strong {
+      display: block;
+      font-size: 1.04rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-chip span {
+      display: block;
+      margin-top: 2px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.78rem;
       font-weight: 700;
     }
 
-    .field-grid {
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 1.06rem;
+      letter-spacing: 0;
+    }
+
+    .grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
+      gap: 14px;
     }
 
     .field {
@@ -290,191 +182,170 @@
     }
 
     label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin: 0 0 7px;
-      color: #3a3448;
-      font-size: 0.9rem;
+      display: block;
+      margin: 0 0 6px;
+      color: #27312d;
+      font-size: 0.88rem;
       font-weight: 800;
     }
 
     .hint {
+      display: block;
+      margin-top: 1px;
       color: var(--muted);
       font-size: 0.74rem;
       font-weight: 700;
     }
 
-    input {
-      width: 100%;
-      min-height: 52px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: var(--surface-strong);
-      color: var(--text);
-      padding: 12px 14px;
-      outline: none;
-      transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
-    }
-
+    input,
     select {
       width: 100%;
-      min-height: 52px;
+      min-height: 50px;
       border: 1px solid var(--line);
-      border-radius: 16px;
-      background: var(--surface-strong);
+      border-radius: 14px;
+      background: var(--surface-soft);
       color: var(--text);
-      padding: 12px 14px;
+      padding: 11px 13px;
       outline: none;
-      transition: border-color 180ms ease, box-shadow 180ms ease;
+      transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
     }
 
     input::placeholder {
-      color: #a19aab;
+      color: #9aa6a1;
     }
 
     input:hover,
     select:hover {
-      border-color: #c4bbab;
+      border-color: #bfcbc5;
+      background: #ffffff;
     }
 
     input:focus,
     select:focus {
       border-color: var(--primary);
+      background: #ffffff;
       box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.14);
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    summary {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 18px;
+      color: var(--text);
+      font-weight: 900;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      content: "+";
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    details[open] summary::after {
+      content: "-";
+    }
+
+    .details-body {
+      border-top: 1px solid var(--line);
+      padding: 18px;
+    }
+
+    .breakdown {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      padding: 9px 0;
+      color: var(--muted);
+      font-weight: 750;
+    }
+
+    .row strong {
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .row.total {
+      border-bottom: 0;
+      color: var(--text);
+      font-size: 1.05rem;
     }
 
     .upload-box {
       display: grid;
       gap: 12px;
-      border: 1px dashed rgba(15, 118, 110, 0.42);
-      border-radius: 20px;
-      background: linear-gradient(135deg, rgba(217, 242, 236, 0.8), rgba(255, 241, 214, 0.68));
-      padding: 18px;
+      border: 1px dashed rgba(15, 118, 110, 0.35);
+      border-radius: 16px;
+      background: var(--primary-soft);
+      padding: 14px;
     }
 
     input[type="file"] {
       min-height: auto;
       border: 0;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.78);
-      padding: 11px;
+      background: #ffffff;
     }
 
     .preview {
       display: none;
       border: 1px solid var(--line);
-      border-radius: 18px;
+      border-radius: 16px;
       background: #ffffff;
-      padding: 10px;
+      padding: 8px;
       overflow: hidden;
     }
 
     .preview img {
       display: block;
       width: 100%;
-      max-height: 280px;
+      max-height: 260px;
       object-fit: contain;
-      border-radius: 12px;
-    }
-
-    .breakdown-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .result-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
-      align-items: center;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: #ffffff;
-      padding: 16px;
-      font-weight: 800;
-    }
-
-    .result-row span:first-child {
-      color: #3a3448;
-    }
-
-    .result-row span:last-child {
-      color: var(--ink);
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    .result-row.total {
-      border-color: rgba(15, 118, 110, 0.24);
-      background: linear-gradient(135deg, var(--primary-soft), #ffffff);
-      padding: 18px;
-      font-size: 1.18rem;
-    }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .metric {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--violet-soft);
-      padding: 15px;
-    }
-
-    .metric:nth-child(2) {
-      background: var(--accent-soft);
-    }
-
-    .quote-card {
-      margin-top: 24px;
-      border: 1px solid rgba(15, 118, 110, 0.18);
-      border-radius: 24px;
-      background:
-        linear-gradient(145deg, rgba(15, 118, 110, 0.96), rgba(10, 85, 79, 0.96)),
-        var(--primary-dark);
-      color: #f8fff9;
-      padding: clamp(20px, 3vw, 28px);
-      box-shadow: 0 20px 48px rgba(15, 118, 110, 0.22);
-    }
-
-    .quote-card .total-label,
-    .quote-card .total-note {
-      color: rgba(248, 255, 249, 0.76);
-    }
-
-    .quote-card .total-value {
-      color: #ffffff;
-    }
-
-    .quote-card .mini-row {
-      border-bottom-color: rgba(255, 255, 255, 0.16);
-      color: rgba(248, 255, 249, 0.82);
-    }
-
-    .quote-card .mini-row span:last-child {
-      color: #ffffff;
+      border-radius: 10px;
     }
 
     .actions {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 12px;
-      margin-top: 18px;
+      gap: 10px;
+      margin-top: 14px;
     }
 
     button {
-      min-height: 52px;
+      min-height: 50px;
       border: 0;
-      border-radius: 16px;
-      color: #ffffff;
+      border-radius: 14px;
       font-weight: 900;
-      padding: 12px 18px;
+      padding: 11px 16px;
       transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
     }
 
@@ -483,12 +354,9 @@
     }
 
     .primary-button {
-      background: linear-gradient(135deg, var(--primary), #115e59);
-      box-shadow: 0 16px 30px rgba(15, 118, 110, 0.24);
-    }
-
-    .primary-button:hover {
-      box-shadow: 0 18px 38px rgba(15, 118, 110, 0.3);
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 14px 28px rgba(15, 118, 110, 0.22);
     }
 
     .secondary-button {
@@ -514,23 +382,12 @@
       grid-column: 1 / -1;
       min-height: 22px;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 700;
     }
 
     .error {
       color: var(--danger);
-    }
-
-    .formula-note {
-      margin: 18px 0 0;
-      border-left: 4px solid var(--accent);
-      border-radius: 14px;
-      background: rgba(255, 241, 214, 0.72);
-      color: #5a3b0b;
-      padding: 14px 16px;
-      font-size: 0.92rem;
-      font-weight: 700;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -542,320 +399,211 @@
       }
     }
 
-    @media (max-width: 900px) {
-      .hero,
-      .calculator-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .total-card {
-        min-height: 0;
-      }
-    }
-
     @media (max-width: 640px) {
-      .page-shell {
-        width: min(100% - 24px, 1180px);
-        padding: calc(14px + env(safe-area-inset-top)) 0 calc(28px + env(safe-area-inset-bottom));
+      .app {
+        width: min(100% - 20px, 760px);
+        padding-top: calc(12px + env(safe-area-inset-top));
       }
 
-      h1 {
-        font-size: clamp(2.15rem, 12vw, 3.65rem);
-        line-height: 1;
+      .topbar {
+        margin-bottom: 10px;
       }
 
-      .hero-copy {
-        min-height: 0;
-        padding: 22px;
-      }
-
-      .total-value {
-        font-size: clamp(3rem, 16vw, 4.4rem);
-      }
-
-      label {
-        display: block;
-      }
-
-      .hint {
-        display: block;
-        margin-top: 2px;
-      }
-
-      .hero-copy,
-      .total-card,
-      .panel {
+      .summary {
+        position: static;
         border-radius: 20px;
+        padding: 18px;
       }
 
-      .hero-stats,
-      .field-grid,
-      .metrics,
+      .card,
+      details {
+        border-radius: 18px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .grid,
+      .summary-grid,
       .actions {
         grid-template-columns: 1fr;
-      }
-
-      .section-heading {
-        display: block;
-      }
-
-      .section-heading p {
-        margin-top: 4px;
-      }
-
-      .result-row {
-        grid-template-columns: 1fr;
-        gap: 3px;
       }
     }
   </style>
 </head>
 <body>
-  <main class="page-shell" id="captureArea">
-    <section class="hero" aria-labelledby="pageTitle">
-      <div class="hero-copy">
-        <div>
-          <p class="eyebrow">3D printing estimate</p>
-          <h1 id="pageTitle">Print pricing that feels ready to send.</h1>
-          <p class="hero-text">Enter print time, filament use, electricity, and upkeep rates. The total updates instantly in INR, and you can save a clean screenshot for the customer.</p>
-        </div>
+  <main class="app" id="captureArea">
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">3D print quote</p>
+        <h1>Quick customer pricing</h1>
+      </div>
+    </header>
 
-        <div class="hero-stats" aria-label="Quick print summary">
-          <div class="stat-chip">
-            <strong id="durationDisplay">15 min</strong>
-            <span>Print time</span>
-          </div>
-          <div class="stat-chip">
-            <strong id="gramRateDisplay">₹1.00/g</strong>
-            <span id="filamentTypeDisplay">PLA material</span>
-          </div>
-          <div class="stat-chip">
-            <strong id="costPerHourDisplay">₹28.96/hr</strong>
-            <span>Effective rate</span>
-          </div>
+    <section class="summary" aria-live="polite">
+      <p class="summary-label">Customer quote</p>
+      <div class="quote-total" id="customerQuoteTotal">₹0.00</div>
+      <div class="summary-grid">
+        <div class="summary-chip">
+          <strong id="yourCostTotal">₹0.00</strong>
+          <span>Your cost</span>
+        </div>
+        <div class="summary-chip">
+          <strong id="quoteProfit">₹0.00</strong>
+          <span>Profit</span>
         </div>
       </div>
-
-      <aside class="total-card" aria-live="polite">
-        <div>
-          <p class="total-label">Your Cost</p>
-          <div class="total-value" id="heroTotal">₹0.00</div>
-          <p class="total-note">Includes material, electricity, machine upkeep, and extras.</p>
-        </div>
-
-        <div class="mini-breakdown">
-          <div class="mini-row">
-            <span>Filament</span>
-            <span id="heroFilament">₹0.00</span>
-          </div>
-          <div class="mini-row">
-            <span>Electricity</span>
-            <span id="heroElectricity">₹0.00</span>
-          </div>
-          <div class="mini-row">
-            <span>Machine & upkeep</span>
-            <span id="heroMachine">₹0.00</span>
-          </div>
-        </div>
-      </aside>
     </section>
 
-    <section class="calculator-grid">
-      <div>
-        <section class="panel" aria-labelledby="jobDetails">
-          <div class="section-heading">
-            <h2 id="jobDetails">Job Details</h2>
-            <p>Name and slicer values</p>
-          </div>
+    <section class="card" aria-labelledby="printDetails">
+      <h2 id="printDetails">Print Details</h2>
+      <div class="grid">
+        <div class="field full">
+          <label for="fileName">File name</label>
+          <input id="fileName" type="text" placeholder="Example: phone-stand" autocomplete="off">
+        </div>
 
-          <div class="field-grid">
-            <div class="field full">
-              <label for="fileName">Save As <span class="hint">used for screenshot file</span></label>
-              <input id="fileName" type="text" placeholder="Enter file name..." autocomplete="off">
-            </div>
+        <div class="field">
+          <label for="filamentType">Filament</label>
+          <select id="filamentType">
+            <option value="PLA">PLA - Standard</option>
+            <option value="PETG">PETG - Strong</option>
+            <option value="ABS">ABS - Heat resistant</option>
+            <option value="TPU">TPU - Flexible</option>
+            <option value="NYLON">Nylon - Engineering</option>
+          </select>
+        </div>
 
-            <div class="field">
-              <label for="hours">Hours</label>
-              <input id="hours" type="number" min="0" step="1" value="0" inputmode="numeric">
-            </div>
+        <div class="field">
+          <label for="filamentUsed">Filament used <span class="hint">grams</span></label>
+          <input id="filamentUsed" type="number" min="0" step="0.01" value="2" inputmode="decimal">
+        </div>
 
-            <div class="field">
-              <label for="minutes">Minutes</label>
-              <input id="minutes" type="number" min="0" max="59" step="1" value="15" inputmode="numeric">
-            </div>
+        <div class="field">
+          <label for="hours">Hours</label>
+          <input id="hours" type="number" min="0" step="1" value="0" inputmode="numeric">
+        </div>
 
-            <div class="field">
-              <label for="filamentUsed">Filament Used <span class="hint">grams</span></label>
-              <input id="filamentUsed" type="number" min="0" step="0.01" value="2" inputmode="decimal">
-            </div>
-
-            <div class="field">
-              <label for="extraCost">Extra Cost <span class="hint">optional</span></label>
-              <input id="extraCost" type="number" min="0" step="0.01" value="0" inputmode="decimal">
-            </div>
-          </div>
-        </section>
-
-        <section class="panel" aria-labelledby="rateSettings">
-          <div class="section-heading">
-            <h2 id="rateSettings">Rate Settings</h2>
-            <p>Adjust once, reuse often</p>
-          </div>
-
-          <div class="field-grid">
-            <div class="field">
-              <label for="filamentType">Filament Type <span class="hint">sets default rate</span></label>
-              <select id="filamentType">
-                <option value="PLA">PLA - Standard</option>
-                <option value="PETG">PETG - Strong</option>
-                <option value="ABS">ABS - Heat resistant</option>
-                <option value="TPU">TPU - Flexible</option>
-                <option value="NYLON">Nylon - Engineering</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="filamentCost">Filament Cost <span class="hint">per 1000g</span></label>
-              <input id="filamentCost" type="number" min="0" step="0.01" value="1000" inputmode="decimal">
-            </div>
-
-            <div class="field">
-              <label for="electricityRate">Electricity Rate <span class="hint">per kWh</span></label>
-              <input id="electricityRate" type="number" min="0" step="0.01" value="8" inputmode="decimal">
-            </div>
-
-            <div class="field">
-              <label for="printerWatts">Printer Power <span class="hint">watts</span></label>
-              <input id="printerWatts" type="number" min="0" step="1" value="120" inputmode="numeric">
-            </div>
-
-            <div class="field">
-              <label for="machineRate">Machine & Upkeep <span class="hint">per hour</span></label>
-              <input id="machineRate" type="number" min="0" step="0.01" value="20" inputmode="decimal">
-            </div>
-          </div>
-
-          <p class="formula-note">Formula: filament + electricity + machine upkeep + extra cost. Electricity uses print hours x printer watts / 1000 x unit rate.</p>
-        </section>
-
-        <section class="panel" aria-labelledby="quoteSettings">
-          <div class="section-heading">
-            <h2 id="quoteSettings">Quote Settings</h2>
-            <p>Customer pricing</p>
-          </div>
-
-          <div class="field-grid">
-            <div class="field">
-              <label for="marginPercent">Profit Margin <span class="hint">percent</span></label>
-              <input id="marginPercent" type="number" min="0" step="0.01" value="40" inputmode="decimal">
-            </div>
-
-            <div class="field">
-              <label for="minimumQuote">Minimum Quote <span class="hint">INR</span></label>
-              <input id="minimumQuote" type="number" min="0" step="0.01" value="50" inputmode="decimal">
-            </div>
-
-            <div class="field full">
-              <label for="discountAmount">Discount <span class="hint">optional INR</span></label>
-              <input id="discountAmount" type="number" min="0" step="0.01" value="0" inputmode="decimal">
-            </div>
-          </div>
-
-          <p class="formula-note">Quote = your cost + profit - discount. If that is below the minimum quote, the minimum quote is used.</p>
-        </section>
-
-        <section class="panel" aria-labelledby="attachmentPanel">
-          <div class="section-heading">
-            <h2 id="attachmentPanel">Attachment</h2>
-            <p>Add slicer screenshot</p>
-          </div>
-
-          <div class="upload-box">
-            <label for="screenshot">Attach Screenshot <span class="hint">image upload</span></label>
-            <input id="screenshot" type="file" accept="image/*">
-            <div class="preview" id="preview">
-              <img id="previewImage" alt="Uploaded screenshot preview">
-            </div>
-          </div>
-        </section>
+        <div class="field">
+          <label for="minutes">Minutes</label>
+          <input id="minutes" type="number" min="0" max="59" step="1" value="15" inputmode="numeric">
+        </div>
       </div>
+    </section>
 
-      <aside>
-        <section class="panel" aria-labelledby="breakdownHeading">
-          <div class="section-heading">
-            <h2 id="breakdownHeading">Cost Breakdown</h2>
-            <p>Live calculation</p>
+    <section class="card" aria-labelledby="customerPricing">
+      <h2 id="customerPricing">Customer Pricing</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="marginPercent">Profit margin <span class="hint">%</span></label>
+          <input id="marginPercent" type="number" min="0" step="0.01" value="40" inputmode="decimal">
+        </div>
+
+        <div class="field">
+          <label for="minimumQuote">Minimum quote <span class="hint">₹</span></label>
+          <input id="minimumQuote" type="number" min="0" step="0.01" value="50" inputmode="decimal">
+        </div>
+
+        <div class="field full">
+          <label for="discountAmount">Discount <span class="hint">optional ₹</span></label>
+          <input id="discountAmount" type="number" min="0" step="0.01" value="0" inputmode="decimal">
+        </div>
+      </div>
+    </section>
+
+    <details>
+      <summary>Cost settings</summary>
+      <div class="details-body">
+        <div class="grid">
+          <div class="field">
+            <label for="filamentCost">Filament cost <span class="hint">per 1000g</span></label>
+            <input id="filamentCost" type="number" min="0" step="0.01" value="1000" inputmode="decimal">
           </div>
 
-          <div class="breakdown-list" aria-live="polite">
-            <div class="result-row">
-              <span>Filament Cost</span>
-              <span id="filamentTotal">₹0.00</span>
-            </div>
-            <div class="result-row">
-              <span>Electricity Cost</span>
-              <span id="electricityTotal">₹0.00</span>
-            </div>
-            <div class="result-row">
-              <span>Machine & Upkeep Cost</span>
-              <span id="machineTotal">₹0.00</span>
-            </div>
-            <div class="result-row">
-              <span>Extra Cost</span>
-              <span id="extraTotal">₹0.00</span>
-            </div>
-            <div class="result-row total">
-              <span>Your Cost</span>
-              <span id="grandTotal">₹0.00</span>
-            </div>
+          <div class="field">
+            <label for="machineRate">Machine rate <span class="hint">per hour</span></label>
+            <input id="machineRate" type="number" min="0" step="0.01" value="20" inputmode="decimal">
           </div>
 
-          <div class="metrics">
-            <div class="metric">
-              <strong id="durationMetric">0.25 hr</strong>
-              <span>Total duration</span>
-            </div>
-            <div class="metric">
-              <strong id="weightMetric">2 g</strong>
-              <span>Filament weight</span>
-            </div>
+          <div class="field">
+            <label for="electricityRate">Electricity <span class="hint">per kWh</span></label>
+            <input id="electricityRate" type="number" min="0" step="0.01" value="8" inputmode="decimal">
           </div>
 
-          <div class="actions">
-            <button id="captureButton" class="primary-button" type="button">Take Page Screenshot</button>
-            <button id="resetButton" class="secondary-button" type="button">Reset</button>
-            <button id="installButton" class="install-button" type="button">Install App</button>
-            <span class="status" id="status"></span>
-          </div>
-        </section>
-
-        <section class="quote-card" aria-labelledby="customerQuoteHeading" aria-live="polite">
-          <div>
-            <p class="total-label" id="customerQuoteHeading">Customer Quote</p>
-            <div class="total-value" id="customerQuoteTotal">₹0.00</div>
-            <p class="total-note">Final amount to share with the customer.</p>
+          <div class="field">
+            <label for="printerWatts">Printer power <span class="hint">watts</span></label>
+            <input id="printerWatts" type="number" min="0" step="1" value="120" inputmode="numeric">
           </div>
 
-          <div class="mini-breakdown">
-            <div class="mini-row">
-              <span>Base cost</span>
-              <span id="quoteBaseCost">₹0.00</span>
-            </div>
-            <div class="mini-row">
-              <span>Profit amount</span>
-              <span id="quoteProfit">₹0.00</span>
-            </div>
-            <div class="mini-row">
-              <span>Discount</span>
-              <span id="quoteDiscount">₹0.00</span>
-            </div>
-            <div class="mini-row">
-              <span>Minimum adjustment</span>
-              <span id="quoteMinimumAdjustment">₹0.00</span>
-            </div>
+          <div class="field full">
+            <label for="extraCost">Extra cost <span class="hint">optional ₹</span></label>
+            <input id="extraCost" type="number" min="0" step="0.01" value="0" inputmode="decimal">
           </div>
-        </section>
-      </aside>
+        </div>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Breakdown</summary>
+      <div class="details-body">
+        <div class="breakdown">
+          <div class="row">
+            <span>Filament</span>
+            <strong id="filamentTotal">₹0.00</strong>
+          </div>
+          <div class="row">
+            <span>Electricity</span>
+            <strong id="electricityTotal">₹0.00</strong>
+          </div>
+          <div class="row">
+            <span>Machine</span>
+            <strong id="machineTotal">₹0.00</strong>
+          </div>
+          <div class="row">
+            <span>Extra</span>
+            <strong id="extraTotal">₹0.00</strong>
+          </div>
+          <div class="row total">
+            <span>Your cost</span>
+            <strong id="grandTotal">₹0.00</strong>
+          </div>
+          <div class="row">
+            <span>Base cost</span>
+            <strong id="quoteBaseCost">₹0.00</strong>
+          </div>
+          <div class="row">
+            <span>Discount</span>
+            <strong id="quoteDiscount">-₹0.00</strong>
+          </div>
+          <div class="row">
+            <span>Minimum adjustment</span>
+            <strong id="quoteMinimumAdjustment">₹0.00</strong>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Screenshot</summary>
+      <div class="details-body">
+        <div class="upload-box">
+          <label for="screenshot">Attach slicer screenshot</label>
+          <input id="screenshot" type="file" accept="image/*">
+          <div class="preview" id="preview">
+            <img id="previewImage" alt="Uploaded screenshot preview">
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <section class="card">
+      <div class="actions">
+        <button id="captureButton" class="primary-button" type="button">Save Screenshot</button>
+        <button id="resetButton" class="secondary-button" type="button">Reset</button>
+        <button id="installButton" class="install-button" type="button">Install App</button>
+        <span class="status" id="status"></span>
+      </div>
     </section>
   </main>
 
@@ -883,19 +631,10 @@
       machineTotal: document.getElementById('machineTotal'),
       extraTotal: document.getElementById('extraTotal'),
       grandTotal: document.getElementById('grandTotal'),
-      heroTotal: document.getElementById('heroTotal'),
-      heroFilament: document.getElementById('heroFilament'),
-      heroElectricity: document.getElementById('heroElectricity'),
-      heroMachine: document.getElementById('heroMachine'),
-      durationDisplay: document.getElementById('durationDisplay'),
-      gramRateDisplay: document.getElementById('gramRateDisplay'),
-      filamentTypeDisplay: document.getElementById('filamentTypeDisplay'),
-      costPerHourDisplay: document.getElementById('costPerHourDisplay'),
-      durationMetric: document.getElementById('durationMetric'),
-      weightMetric: document.getElementById('weightMetric'),
+      yourCostTotal: document.getElementById('yourCostTotal'),
+      quoteProfit: document.getElementById('quoteProfit'),
       customerQuoteTotal: document.getElementById('customerQuoteTotal'),
       quoteBaseCost: document.getElementById('quoteBaseCost'),
-      quoteProfit: document.getElementById('quoteProfit'),
       quoteDiscount: document.getElementById('quoteDiscount'),
       quoteMinimumAdjustment: document.getElementById('quoteMinimumAdjustment')
     };
@@ -931,15 +670,9 @@
       }).format(value);
     }
 
-    function formatNumber(value, maximumFractionDigits = 2) {
-      return new Intl.NumberFormat('en-IN', {
-        maximumFractionDigits
-      }).format(value);
-    }
-
     function sanitizeFileName(value) {
       const cleaned = value.trim().replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, '-');
-      return cleaned || '3d-print-cost';
+      return cleaned || '3d-print-quote';
     }
 
     function saveDraft() {
@@ -971,7 +704,6 @@
       const hours = numberFrom(fields.hours);
       const minutes = Math.min(numberFrom(fields.minutes), 59);
       const filamentUsed = numberFrom(fields.filamentUsed);
-      const filamentType = fields.filamentType.value;
       const durationHours = hours + (minutes / 60);
       const gramRate = numberFrom(fields.filamentCost) / 1000;
       const filamentTotal = gramRate * filamentUsed;
@@ -985,26 +717,16 @@
       const minimumQuote = numberFrom(fields.minimumQuote);
       const finalQuote = Math.max(quotedBeforeMinimum, minimumQuote);
       const minimumAdjustment = Math.max(minimumQuote - quotedBeforeMinimum, 0);
-      const costPerHour = durationHours > 0 ? grandTotal / durationHours : 0;
 
       outputs.filamentTotal.textContent = formatINR(filamentTotal);
       outputs.electricityTotal.textContent = formatINR(electricityTotal);
       outputs.machineTotal.textContent = formatINR(machineTotal);
       outputs.extraTotal.textContent = formatINR(extraTotal);
       outputs.grandTotal.textContent = formatINR(grandTotal);
-      outputs.heroTotal.textContent = formatINR(grandTotal);
-      outputs.heroFilament.textContent = formatINR(filamentTotal);
-      outputs.heroElectricity.textContent = formatINR(electricityTotal);
-      outputs.heroMachine.textContent = formatINR(machineTotal);
-      outputs.durationDisplay.textContent = durationHours >= 1 ? `${formatNumber(durationHours)} hr` : `${minutes} min`;
-      outputs.gramRateDisplay.textContent = `${formatINR(gramRate)}/g`;
-      outputs.filamentTypeDisplay.textContent = `${filamentType} material`;
-      outputs.costPerHourDisplay.textContent = `${formatINR(costPerHour)}/hr`;
-      outputs.durationMetric.textContent = `${formatNumber(durationHours)} hr`;
-      outputs.weightMetric.textContent = `${formatNumber(filamentUsed)} g`;
+      outputs.yourCostTotal.textContent = formatINR(grandTotal);
+      outputs.quoteProfit.textContent = formatINR(profitAmount);
       outputs.customerQuoteTotal.textContent = formatINR(finalQuote);
       outputs.quoteBaseCost.textContent = formatINR(grandTotal);
-      outputs.quoteProfit.textContent = formatINR(profitAmount);
       outputs.quoteDiscount.textContent = `-${formatINR(discountAmount)}`;
       outputs.quoteMinimumAdjustment.textContent = formatINR(minimumAdjustment);
       saveDraft();
@@ -1024,7 +746,7 @@
 
       try {
         const canvas = await html2canvas(document.getElementById('captureArea'), {
-          backgroundColor: '#f6f3ec',
+          backgroundColor: '#f5f7f4',
           scale: Math.min(window.devicePixelRatio || 1, 2)
         });
         const link = document.createElement('a');

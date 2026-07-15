@@ -1,4 +1,4 @@
-const CACHE_NAME = "3d-print-calculator-v3";
+const CACHE_NAME = "3d-print-calculator-v4";
 const APP_SHELL = [
   "/",
   "/calculations.html",
