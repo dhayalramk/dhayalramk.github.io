@@ -431,6 +431,36 @@
       background: var(--accent-soft);
     }
 
+    .quote-card {
+      margin-top: 24px;
+      border: 1px solid rgba(15, 118, 110, 0.18);
+      border-radius: 24px;
+      background:
+        linear-gradient(145deg, rgba(15, 118, 110, 0.96), rgba(10, 85, 79, 0.96)),
+        var(--primary-dark);
+      color: #f8fff9;
+      padding: clamp(20px, 3vw, 28px);
+      box-shadow: 0 20px 48px rgba(15, 118, 110, 0.22);
+    }
+
+    .quote-card .total-label,
+    .quote-card .total-note {
+      color: rgba(248, 255, 249, 0.76);
+    }
+
+    .quote-card .total-value {
+      color: #ffffff;
+    }
+
+    .quote-card .mini-row {
+      border-bottom-color: rgba(255, 255, 255, 0.16);
+      color: rgba(248, 255, 249, 0.82);
+    }
+
+    .quote-card .mini-row span:last-child {
+      color: #ffffff;
+    }
+
     .actions {
       display: grid;
       grid-template-columns: 1fr auto;
@@ -608,7 +638,7 @@
 
       <aside class="total-card" aria-live="polite">
         <div>
-          <p class="total-label">Estimated total</p>
+          <p class="total-label">Your Cost</p>
           <div class="total-value" id="heroTotal">₹0.00</div>
           <p class="total-note">Includes material, electricity, machine upkeep, and extras.</p>
         </div>
@@ -708,6 +738,32 @@
           <p class="formula-note">Formula: filament + electricity + machine upkeep + extra cost. Electricity uses print hours x printer watts / 1000 x unit rate.</p>
         </section>
 
+        <section class="panel" aria-labelledby="quoteSettings">
+          <div class="section-heading">
+            <h2 id="quoteSettings">Quote Settings</h2>
+            <p>Customer pricing</p>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="marginPercent">Profit Margin <span class="hint">percent</span></label>
+              <input id="marginPercent" type="number" min="0" step="0.01" value="40" inputmode="decimal">
+            </div>
+
+            <div class="field">
+              <label for="minimumQuote">Minimum Quote <span class="hint">INR</span></label>
+              <input id="minimumQuote" type="number" min="0" step="0.01" value="50" inputmode="decimal">
+            </div>
+
+            <div class="field full">
+              <label for="discountAmount">Discount <span class="hint">optional INR</span></label>
+              <input id="discountAmount" type="number" min="0" step="0.01" value="0" inputmode="decimal">
+            </div>
+          </div>
+
+          <p class="formula-note">Quote = your cost + profit - discount. If that is below the minimum quote, the minimum quote is used.</p>
+        </section>
+
         <section class="panel" aria-labelledby="attachmentPanel">
           <div class="section-heading">
             <h2 id="attachmentPanel">Attachment</h2>
@@ -749,7 +805,7 @@
               <span id="extraTotal">₹0.00</span>
             </div>
             <div class="result-row total">
-              <span>Total Cost</span>
+              <span>Your Cost</span>
               <span id="grandTotal">₹0.00</span>
             </div>
           </div>
@@ -772,6 +828,33 @@
             <span class="status" id="status"></span>
           </div>
         </section>
+
+        <section class="quote-card" aria-labelledby="customerQuoteHeading" aria-live="polite">
+          <div>
+            <p class="total-label" id="customerQuoteHeading">Customer Quote</p>
+            <div class="total-value" id="customerQuoteTotal">₹0.00</div>
+            <p class="total-note">Final amount to share with the customer.</p>
+          </div>
+
+          <div class="mini-breakdown">
+            <div class="mini-row">
+              <span>Base cost</span>
+              <span id="quoteBaseCost">₹0.00</span>
+            </div>
+            <div class="mini-row">
+              <span>Profit amount</span>
+              <span id="quoteProfit">₹0.00</span>
+            </div>
+            <div class="mini-row">
+              <span>Discount</span>
+              <span id="quoteDiscount">₹0.00</span>
+            </div>
+            <div class="mini-row">
+              <span>Minimum adjustment</span>
+              <span id="quoteMinimumAdjustment">₹0.00</span>
+            </div>
+          </div>
+        </section>
       </aside>
     </section>
   </main>
@@ -788,7 +871,10 @@
       electricityRate: document.getElementById('electricityRate'),
       printerWatts: document.getElementById('printerWatts'),
       machineRate: document.getElementById('machineRate'),
-      extraCost: document.getElementById('extraCost')
+      extraCost: document.getElementById('extraCost'),
+      marginPercent: document.getElementById('marginPercent'),
+      minimumQuote: document.getElementById('minimumQuote'),
+      discountAmount: document.getElementById('discountAmount')
     };
 
     const outputs = {
@@ -806,7 +892,12 @@
       filamentTypeDisplay: document.getElementById('filamentTypeDisplay'),
       costPerHourDisplay: document.getElementById('costPerHourDisplay'),
       durationMetric: document.getElementById('durationMetric'),
-      weightMetric: document.getElementById('weightMetric')
+      weightMetric: document.getElementById('weightMetric'),
+      customerQuoteTotal: document.getElementById('customerQuoteTotal'),
+      quoteBaseCost: document.getElementById('quoteBaseCost'),
+      quoteProfit: document.getElementById('quoteProfit'),
+      quoteDiscount: document.getElementById('quoteDiscount'),
+      quoteMinimumAdjustment: document.getElementById('quoteMinimumAdjustment')
     };
 
     const status = document.getElementById('status');
@@ -888,6 +979,12 @@
       const machineTotal = durationHours * numberFrom(fields.machineRate);
       const extraTotal = numberFrom(fields.extraCost);
       const grandTotal = filamentTotal + electricityTotal + machineTotal + extraTotal;
+      const profitAmount = grandTotal * (numberFrom(fields.marginPercent) / 100);
+      const discountAmount = Math.min(numberFrom(fields.discountAmount), grandTotal + profitAmount);
+      const quotedBeforeMinimum = grandTotal + profitAmount - discountAmount;
+      const minimumQuote = numberFrom(fields.minimumQuote);
+      const finalQuote = Math.max(quotedBeforeMinimum, minimumQuote);
+      const minimumAdjustment = Math.max(minimumQuote - quotedBeforeMinimum, 0);
       const costPerHour = durationHours > 0 ? grandTotal / durationHours : 0;
 
       outputs.filamentTotal.textContent = formatINR(filamentTotal);
@@ -905,6 +1002,11 @@
       outputs.costPerHourDisplay.textContent = `${formatINR(costPerHour)}/hr`;
       outputs.durationMetric.textContent = `${formatNumber(durationHours)} hr`;
       outputs.weightMetric.textContent = `${formatNumber(filamentUsed)} g`;
+      outputs.customerQuoteTotal.textContent = formatINR(finalQuote);
+      outputs.quoteBaseCost.textContent = formatINR(grandTotal);
+      outputs.quoteProfit.textContent = formatINR(profitAmount);
+      outputs.quoteDiscount.textContent = `-${formatINR(discountAmount)}`;
+      outputs.quoteMinimumAdjustment.textContent = formatINR(minimumAdjustment);
       saveDraft();
     }
 
@@ -949,6 +1051,9 @@
       fields.printerWatts.value = '120';
       fields.machineRate.value = '20';
       fields.extraCost.value = '0';
+      fields.marginPercent.value = '40';
+      fields.minimumQuote.value = '50';
+      fields.discountAmount.value = '0';
       screenshotInput.value = '';
       preview.style.display = 'none';
       previewImage.removeAttribute('src');
