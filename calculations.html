@@ -318,15 +318,29 @@
       transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
     }
 
+    select {
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface-strong);
+      color: var(--text);
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+
     input::placeholder {
       color: #a19aab;
     }
 
-    input:hover {
+    input:hover,
+    select:hover {
       border-color: #c4bbab;
     }
 
-    input:focus {
+    input:focus,
+    select:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.14);
     }
@@ -583,7 +597,7 @@
           </div>
           <div class="stat-chip">
             <strong id="gramRateDisplay">₹1.00/g</strong>
-            <span>Material rate</span>
+            <span id="filamentTypeDisplay">PLA material</span>
           </div>
           <div class="stat-chip">
             <strong id="costPerHourDisplay">₹28.96/hr</strong>
@@ -659,6 +673,17 @@
           </div>
 
           <div class="field-grid">
+            <div class="field">
+              <label for="filamentType">Filament Type <span class="hint">sets default rate</span></label>
+              <select id="filamentType">
+                <option value="PLA">PLA - Standard</option>
+                <option value="PETG">PETG - Strong</option>
+                <option value="ABS">ABS - Heat resistant</option>
+                <option value="TPU">TPU - Flexible</option>
+                <option value="NYLON">Nylon - Engineering</option>
+              </select>
+            </div>
+
             <div class="field">
               <label for="filamentCost">Filament Cost <span class="hint">per 1000g</span></label>
               <input id="filamentCost" type="number" min="0" step="0.01" value="1000" inputmode="decimal">
@@ -757,6 +782,7 @@
       fileName: document.getElementById('fileName'),
       hours: document.getElementById('hours'),
       minutes: document.getElementById('minutes'),
+      filamentType: document.getElementById('filamentType'),
       filamentCost: document.getElementById('filamentCost'),
       filamentUsed: document.getElementById('filamentUsed'),
       electricityRate: document.getElementById('electricityRate'),
@@ -777,6 +803,7 @@
       heroMachine: document.getElementById('heroMachine'),
       durationDisplay: document.getElementById('durationDisplay'),
       gramRateDisplay: document.getElementById('gramRateDisplay'),
+      filamentTypeDisplay: document.getElementById('filamentTypeDisplay'),
       costPerHourDisplay: document.getElementById('costPerHourDisplay'),
       durationMetric: document.getElementById('durationMetric'),
       weightMetric: document.getElementById('weightMetric')
@@ -790,6 +817,13 @@
     const preview = document.getElementById('preview');
     const previewImage = document.getElementById('previewImage');
     const storageKey = 'threeDPrintCostCalculatorDraft';
+    const filamentRates = {
+      PLA: 1000,
+      PETG: 1300,
+      ABS: 1200,
+      TPU: 2200,
+      NYLON: 3000
+    };
     let deferredInstallPrompt;
 
     function numberFrom(input) {
@@ -846,6 +880,7 @@
       const hours = numberFrom(fields.hours);
       const minutes = Math.min(numberFrom(fields.minutes), 59);
       const filamentUsed = numberFrom(fields.filamentUsed);
+      const filamentType = fields.filamentType.value;
       const durationHours = hours + (minutes / 60);
       const gramRate = numberFrom(fields.filamentCost) / 1000;
       const filamentTotal = gramRate * filamentUsed;
@@ -866,6 +901,7 @@
       outputs.heroMachine.textContent = formatINR(machineTotal);
       outputs.durationDisplay.textContent = durationHours >= 1 ? `${formatNumber(durationHours)} hr` : `${minutes} min`;
       outputs.gramRateDisplay.textContent = `${formatINR(gramRate)}/g`;
+      outputs.filamentTypeDisplay.textContent = `${filamentType} material`;
       outputs.costPerHourDisplay.textContent = `${formatINR(costPerHour)}/hr`;
       outputs.durationMetric.textContent = `${formatNumber(durationHours)} hr`;
       outputs.weightMetric.textContent = `${formatNumber(filamentUsed)} g`;
@@ -906,6 +942,7 @@
       fields.fileName.value = '';
       fields.hours.value = '0';
       fields.minutes.value = '15';
+      fields.filamentType.value = 'PLA';
       fields.filamentCost.value = '1000';
       fields.filamentUsed.value = '2';
       fields.electricityRate.value = '8';
@@ -922,6 +959,11 @@
 
     Object.values(fields).forEach((field) => {
       field.addEventListener('input', calculateCost);
+    });
+
+    fields.filamentType.addEventListener('change', () => {
+      fields.filamentCost.value = filamentRates[fields.filamentType.value] || filamentRates.PLA;
+      calculateCost();
     });
 
     screenshotInput.addEventListener('change', () => {
