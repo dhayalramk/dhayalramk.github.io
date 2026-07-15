@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="3D Cost">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
   <title>3D Print Cost Calculator (INR)</title>
   <style>
     :root {
@@ -35,7 +41,7 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
+      min-height: 100dvh;
       overflow-x: hidden;
       background:
         radial-gradient(circle at top left, rgba(15, 118, 110, 0.2), transparent 32rem),
@@ -63,7 +69,7 @@
     .page-shell {
       width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 34px 0 56px;
+      padding: calc(34px + env(safe-area-inset-top)) 0 calc(56px + env(safe-area-inset-bottom));
     }
 
     .hero {
@@ -447,6 +453,19 @@
       color: var(--text);
     }
 
+    .install-button {
+      display: none;
+      grid-column: 1 / -1;
+      border: 1px solid rgba(15, 118, 110, 0.18);
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      box-shadow: none;
+    }
+
+    .install-button.is-visible {
+      display: block;
+    }
+
     .status {
       grid-column: 1 / -1;
       min-height: 22px;
@@ -493,7 +512,30 @@
     @media (max-width: 640px) {
       .page-shell {
         width: min(100% - 24px, 1180px);
-        padding: 18px 0 34px;
+        padding: calc(14px + env(safe-area-inset-top)) 0 calc(28px + env(safe-area-inset-bottom));
+      }
+
+      h1 {
+        font-size: clamp(2.15rem, 12vw, 3.65rem);
+        line-height: 1;
+      }
+
+      .hero-copy {
+        min-height: 0;
+        padding: 22px;
+      }
+
+      .total-value {
+        font-size: clamp(3rem, 16vw, 4.4rem);
+      }
+
+      label {
+        display: block;
+      }
+
+      .hint {
+        display: block;
+        margin-top: 2px;
       }
 
       .hero-copy,
@@ -701,6 +743,7 @@
           <div class="actions">
             <button id="captureButton" class="primary-button" type="button">Take Page Screenshot</button>
             <button id="resetButton" class="secondary-button" type="button">Reset</button>
+            <button id="installButton" class="install-button" type="button">Install App</button>
             <span class="status" id="status"></span>
           </div>
         </section>
@@ -742,9 +785,12 @@
     const status = document.getElementById('status');
     const captureButton = document.getElementById('captureButton');
     const resetButton = document.getElementById('resetButton');
+    const installButton = document.getElementById('installButton');
     const screenshotInput = document.getElementById('screenshot');
     const preview = document.getElementById('preview');
     const previewImage = document.getElementById('previewImage');
+    const storageKey = 'threeDPrintCostCalculatorDraft';
+    let deferredInstallPrompt;
 
     function numberFrom(input) {
       const value = Number.parseFloat(input.value);
@@ -769,6 +815,31 @@
     function sanitizeFileName(value) {
       const cleaned = value.trim().replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, '-');
       return cleaned || '3d-print-cost';
+    }
+
+    function saveDraft() {
+      const draft = Object.fromEntries(
+        Object.entries(fields).map(([key, field]) => [key, field.value])
+      );
+      localStorage.setItem(storageKey, JSON.stringify(draft));
+    }
+
+    function restoreDraft() {
+      const saved = localStorage.getItem(storageKey);
+      if (!saved) {
+        return;
+      }
+
+      try {
+        const draft = JSON.parse(saved);
+        Object.entries(draft).forEach(([key, value]) => {
+          if (fields[key]) {
+            fields[key].value = value;
+          }
+        });
+      } catch (error) {
+        localStorage.removeItem(storageKey);
+      }
     }
 
     function calculateCost() {
@@ -798,6 +869,7 @@
       outputs.costPerHourDisplay.textContent = `${formatINR(costPerHour)}/hr`;
       outputs.durationMetric.textContent = `${formatNumber(durationHours)} hr`;
       outputs.weightMetric.textContent = `${formatNumber(filamentUsed)} g`;
+      saveDraft();
     }
 
     async function takeScreenshot() {
@@ -844,6 +916,7 @@
       preview.style.display = 'none';
       previewImage.removeAttribute('src');
       status.textContent = '';
+      localStorage.removeItem(storageKey);
       calculateCost();
     }
 
@@ -865,6 +938,39 @@
 
     captureButton.addEventListener('click', takeScreenshot);
     resetButton.addEventListener('click', resetCalculator);
+    installButton.addEventListener('click', async () => {
+      if (!deferredInstallPrompt) {
+        return;
+      }
+
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      installButton.classList.remove('is-visible');
+    });
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      installButton.classList.add('is-visible');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      installButton.classList.remove('is-visible');
+      status.textContent = 'App installed.';
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {
+          status.textContent = 'Offline mode could not start in this browser.';
+          status.classList.add('error');
+        });
+      });
+    }
+
+    restoreDraft();
     calculateCost();
   </script>
 </body>
